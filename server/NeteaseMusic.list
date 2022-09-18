@@ -1,0 +1,14 @@
+# > NeteaseMusic Unlock List
+# > 2022.08.27
+
+http=ivapp.cn/wyy.txt, fast-open=false, udp-relay=false, tag=🎶 music1
+http=music.lolico.me:39000, fast-open=false, udp-relay=false, tag=🎶 music2
+http=lolico.me:443, fast-open=false, udp-relay=false, tag=🎶 music3
+http=salvan.icu:19980, fast-open=false, udp-relay=false, tag=🎶 music4
+http=1.116.214.16:19980, fast-open=false, udp-relay=false, tag=🎶 music5
+http=106.52.127.72:19951, fast-open=false, udp-relay=false, tag=🎶 music6
+http=101.132.79.113:23333, fast-open=false, udp-relay=false, tag=🎶 music7
+http=taron.top:200, fast-open=false, udp-relay=false, tag=🎶 music8
+http=music.griouges.cn:39000, over-tls=false, fast-open=true, udp-relay=false, server_check_url=http://interface3.music.163.com, tag=🎶 music9
+shadowsocks=music.desperadoj.com:30001, method=aes-128-gcm, password=desperadoj.com_free_proxy_d39m, fast-open=false, udp-relay=false, tag=🎶 music10
+shadowsocks=music.desperadoj.com:30003, method=aes-128-gcm, password=desperadoj.com_free_proxy_d39m, fast-open=false, udp-relay=false, tag=🎶 music11
