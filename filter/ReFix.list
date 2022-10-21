@@ -34,8 +34,6 @@ host, ocsp.digicert.cn, reject
 host, lf26-cdn-tos.bytegecko.com, reject
 host, lf3-cdn-tos.bytegecko.com, reject
 
-host, p6-reading-sign.fqnovelpic.com, reject
-host, p3-reading-sign.fqnovelpic.com, reject
 host, mon11-misc-lq.fqnovel.com, reject
 host, rtlog5-applog-lq.fqnovel.com, reject
 
@@ -58,4 +56,3 @@ host, is-lq.snssdk.com, reject
 
 host, p9-ad-sign.byteimg.com, reject
 host, p6-ad-sign.byteimg.com, reject
-host, p6-novel.byteimg.com, reject
