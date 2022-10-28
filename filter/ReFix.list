@@ -56,3 +56,15 @@ host, is-lq.snssdk.com, reject
 
 host, p9-ad-sign.byteimg.com, reject
 host, p6-ad-sign.byteimg.com, reject
+
+host, mssdk.bytedance.com, reject
+host, tnc3-alisc1.zijieapi.com, reject
+host, impression.aflink.com, reject
+host, skdisplay.jd.com, reject
+host, pubgw.api.ddxq.mobi, reject
+host, saveu5-normal-lq.zijieapi.com, reject
+host, mssdk3-normal-lq.zijieapi.com, reject
+host, growth.ecombdapi.com, reject
+host, adv-96monitor.cn, reject
+host, tnc3-bjlgy.snssdk.com, reject
+host, tnc3-aliec2.zijieapi.com, reject
