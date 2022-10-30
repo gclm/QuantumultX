@@ -23,6 +23,10 @@ ip-cidr, 192.168.0.1/24, direct
 # > 天翼网关
 ip-cidr, 192.168.1.1/24, direct
 
+
+host, ntb.lanjie100.com, reject
+
+
 #> 字节
 host, lf6-mg-developer.dailygn.com, reject
 host, mon.toutiaocloud.com, reject
