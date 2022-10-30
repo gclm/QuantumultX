@@ -49,9 +49,6 @@ host, bsync3-normal-lq.zijieapi.com, reject
 host, gecko5-lq.zijieapi.com, reject
 host, gecko3-lq.zijieapi.com, reject
 
-host, p3-developer-sign.bytemaimg.com, reject
-host, p9-developer-sign.bytemaimg.com, reject
-
 host, tnc3-aliec2.snssdk.com, reject
 host, toutiao-frontier.snssdk.com, reject
 host, security-lq.snssdk.com, reject
