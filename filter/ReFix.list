@@ -34,7 +34,6 @@ host, security-lq.snssdk.com, reject
 host, tnc3-alisc1.snssdk.com, reject
 host, is-lq.snssdk.com, reject
 
-host, lf6-mg-developer.dailygn.com, reject
 host, mon.toutiaocloud.com, reject
 host, praisewindow.ugsdk.cn, reject
 host, market.wsskj520.cn, reject
