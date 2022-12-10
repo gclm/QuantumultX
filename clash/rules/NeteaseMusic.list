@@ -1,0 +1,7 @@
+# mac专用
+DOMAIN-SUFFIX,music.163.com
+DOMAIN-SUFFIX,man.netease.com
+
+# windows && 安卓
+PROCESS-NAME,cloudmusic.exe
+PROCESS-NAME,com.netease.cloudmusic
