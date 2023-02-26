@@ -3,7 +3,6 @@ host, toutiao-frontier.snssdk.com, reject
 host, security-lq.snssdk.com, reject
 host, tnc3-alisc1.snssdk.com, reject
 host, is-lq.snssdk.com, reject
-
 host, mon.toutiaocloud.com, reject
 host, praisewindow.ugsdk.cn, reject
 host, market.wsskj520.cn, reject
@@ -31,12 +30,9 @@ host, v3-novelapp.fqnovelvod.com, reject
 host, mon.toutiao.com, reject
 host, rtlog3-applog.fqnovel.com, reject
 host, mon3-misc.fqnovel.com, reject
-host, gurd.snssdk.com, reject
 host, security.snssdk.com, reject
 host, v3-novelapp.ixigua.com, reject
-host, v3-novelapp.ixigua.com, reject
 host, is.snssdk.com, reject
-host, mon11-misc.fqnovel.com, reject
 host, polaris.zijieapi.com, reject
 host, minigame3-normal.zijieapi.com, reject
 host, api5-normal.fqnovel.com, reject
@@ -45,7 +41,6 @@ host, lf5-webcast-cdn-tos.bytegecko.com, reject
 host, zlink.ugsdk.cn, reject
 host, lf6-mg-developer.dailygn.com, reject
 host, minigame5-normal.zijieapi.com, reject
-host, i.snssdk.com, reject
 host, lf6-cdn-tos.bytegecko.com, reject
 host, log3-applog-lq.fqnovel.com, reject
 host, rtlog5-applog-lq.fqnovel.com, reject
@@ -66,7 +61,6 @@ host, ichannel.snssdk.com, reject
 host, lf5-cdn-tos.bytegecko.com, reject
 host, lf-sourcecdn-tos.bytegecko.com, reject
 host, log5-applog-lq.fqnovel.com, reject
-host, mon.toutiaocloud.net, reject
 host, lf3-cj-cdn-tos.bytegecko.com, reject
 host, saveu5-normal-lq.zijieapi.com, reject
 host, tnc11-aliec2.zijieapi.com, reject
@@ -100,7 +94,6 @@ host, ot20936cpig8m93k3lhbbigrc547dmdhqr69p4hftb3p18ir4h5fvo4i.qc.bsccdn.net, re
 host, mssdk3-normal-lq.zijieapi.com, reject
 host, lf26-cj-cdn-tos.bytegecko.com, reject
 host, lf26-webcast-cdn-tos.bytegecko.com, reject
-host, mon11-misc-lq.fqnovel.com, reject
 host, 36-35-36-203.volcsiriusbd.com, reject
 host, isaas.ecombdapi.com, reject
 host, mkt-advertisement.tuhu.cn, reject
