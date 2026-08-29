@@ -77,8 +77,17 @@ KV_SECTIONS = {"general", "mitm", "http_backend"}
 SKIP_SECTIONS = [
     "base", "patches", "policy_map",
     "local_filters", "remote_filters",
-    "filter_remote"
+    "filter_remote",
+    # 构建声明键（非 QX 段落），防止被当成规则注入产物
+    "notify", "localize_skip"
 ]
+
+# 合法 QX 段落白名单：通用注入循环只处理这些键，其余 config.yaml 键一律告警跳过
+VALID_SECTIONS = {
+    "general", "dns", "policy", "server_local", "server_remote",
+    "filter_local", "filter_remote", "rewrite_local", "rewrite_remote",
+    "task_local", "http_backend", "mitm"
+}
 
 # 模拟 QX 客户端的 UA
 QX_HEADERS = {"User-Agent": "Quantumult X/1.0.31"}
@@ -309,6 +318,15 @@ def lint_output(manager):
         ("rewrite_remote", 3, "[rewrite_remote] 远程重写引用数量异常"),
     ]
     problems = [msg for sec, minimum, msg in checks if active_lines(sec) < minimum]
+
+    # 未知段落检查：防止构建声明键（notify/localize_skip 等）泄漏进产物
+    unknown = [
+        s for s, lines in manager.sections.items()
+        if s != "header" and s not in VALID_SECTIONS and any(l.strip() for l in lines)
+    ]
+    if unknown:
+        problems.append(f"输出包含未知段落: {', '.join(unknown)}")
+
     if problems:
         raise RuntimeError("输出配置 lint 未通过: " + "; ".join(problems))
     logger.info("✅ [Lint] 输出配置校验通过")
@@ -479,6 +497,11 @@ def main():
         if config:
             for section_name, content in config.items():
                 if section_name in SKIP_SECTIONS:
+                    continue
+
+                # 白名单校验：非 QX 段落的键（如构建声明）不允许注入产物
+                if section_name not in VALID_SECTIONS:
+                    logger.warning(f"⏭️ [Inject] 跳过非 QX 段落的配置键: {section_name}")
                     continue
 
                 # 处理 KV 节点 (General, MITM) - 覆盖模式
