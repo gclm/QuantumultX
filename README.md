@@ -1,10 +1,8 @@
-# QX-Config-Sync：Quantumult X 一键去广告
+# QuantumultX 自用配置：一键去广告
 
-> **Quantumult X 一键去广告开源配置**：自动聚合、更新并本地化常用去广告规则，导入即可使用，也可以完全按自己的需求定制。
+> **Quantumult X 自用去广告配置**：自动聚合、更新并本地化常用去广告规则，导入即可使用。
 
-QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面向日常使用的 **Quantumult X 去广告配置（插件集合）**，帮助你减少 App 开屏、信息流、网页和视频场景中的常见广告；自动同步能力则负责让这份配置持续更新、稳定可用。
-
-**不想研究规则语法？直接使用生成好的配置。想自己掌控？Fork 后只维护一份 `config.yaml`，剩下的交给 GitHub Actions。**
+本仓库是我自用的 **Quantumult X 去广告配置（插件集合）**，用于减少 App 开屏、信息流、网页和视频场景中的常见广告。GitHub Actions 每日自动构建：合并自有底包与个人增量配置、把上游规则快照进仓库，保证配置持续更新、稳定可用。
 
 [立即使用本地化配置](https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf) · [镜像加速版](https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/QuantumultX_Mirror.conf) · [查看自动构建状态](https://github.com/gclm/QuantumultX/actions)
 
@@ -14,20 +12,16 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
 
 - **一键启用常用去广告规则**：集中管理 App、网页、视频等场景的分流与重写规则。
 - **覆盖常见应用场景**：项目当前整合了微博、知乎、小红书、哔哩哔哩、高德地图、网易、百度网盘、YouTube、Spotify 等相关规则。
-- **每天自动更新**：默认每天北京时间 06:00 拉取最新底包和上游规则，无需手动追更。
+- **每天自动更新**：默认每天北京时间 06:00 自动构建，同步上游规则并重新生成配置，无需手动追更。
 - **把远程规则保存到自己的仓库**：降低上游链接失效、限速或变更带来的影响。
-- **保留完整控制权**：所有配置和规则公开可见，可增删、替换、审查，不依赖封闭服务。
+- **不包含任何私人信息**：无机场订阅、无证书数据，所有配置和规则公开可审查。
 - **不仅能去广告**：同时支持自定义分流、策略组、DNS、MITM、重写和定时任务。
 
 > 去广告效果取决于上游规则、App 版本和 Quantumult X 的 MITM 配置，无法保证覆盖所有广告。部分 HTTPS 重写规则需要安装并信任 Quantumult X 证书后才会生效。
 
 ---
 
-## 🚀 两种使用方式
-
-### 方式一：直接导入，一键使用
-
-适合只想快速获得去广告配置、不准备维护规则的用户。
+## 🚀 导入使用
 
 1. 先备份你当前的 Quantumult X 配置。
 2. 复制下面的配置地址（三个地址内容完全相同，只是分发链路不同，按网络可达性任选其一）：
@@ -39,45 +33,13 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
    | **CF（自建反代）** | `https://proxy.991201.xyz/https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_CF.conf` | 以上均不稳时 |
 
 3. 在 Quantumult X 中打开配置文件管理，选择“下载配置”，粘贴地址并导入。
-4. 如需使用 HTTPS 重写规则，请在 Quantumult X 中生成、安装并信任 MITM 证书。
+4. 如需使用 HTTPS 重写规则，请按下一节「配置 Quantumult X」生成、安装并信任 MITM 证书。
 
 `QuantumultX_Local.conf` 会优先引用本仓库保存的规则文件，适合日常使用。导入完整配置可能替换你现有的策略与分流，因此第一步请务必备份。
 
 > **节点订阅不随配置分发**：本配置不包含任何机场订阅链接（策略组通过 `server-tag-regex` 正则自动分组，兼容任意机场）。请在 Quantumult X 的「订阅」区自行添加并维护你的节点订阅。
 
-### 方式二：Fork 后定制自己的版本
-
-适合需要添加节点订阅、调整策略组或选择去广告插件的用户。
-
-1. 点击右上角 **Fork**，把仓库复制到你的 GitHub 账号。
-2. 编辑 `profiles/config.yaml`：
-
-   - 在 `rewrite_remote` 中启用、移除或添加去广告插件。
-   - 在 `local_filters` 中维护自己的分流规则。
-   - 在 `policy` 中调整策略组。
-   - 如需节点，在安全环境中配置 `server_remote`。
-
-   > 如果仓库是公开的，请勿提交带有 Token 的机场订阅地址或其他敏感信息。
-
-3. 在仓库的 `Settings` → `Secrets and variables` → `Actions` 中添加：
-
-   | Secret | 是否必需 | 用途 |
-   |---|---:|---|
-   | `FEISHU_WEBHOOK_URL` | 通知必选 | 飞书自定义机器人 Webhook 地址（默认通知通道） |
-   | `FEISHU_SECRET` | 可选 | 飞书机器人开启"签名校验"时的加签密钥 |
-   | `NOTIFY_PROVIDER` | 可选 | 通知通道切换：`feishu`（默认）/ `telegram` / `both` |
-   | `URL_RAW_PREFIX` | 可选 | Raw 通道前缀，未配置时按仓库名自动推导 |
-   | `URL_MIRROR_PREFIX` | 可选 | 镜像通道前缀（jsDelivr） |
-   | `URL_CF_PREFIX` | 可选 | Cloudflare Workers 反代通道前缀 |
-   | `TELEGRAM_BOT_TOKEN` | 可选 | Telegram 通知的 Bot Token（切换到 telegram 时需要） |
-   | `TELEGRAM_CHAT_ID` | 可选 | Telegram 接收通知的 Chat ID |
-
-   > **飞书通知配置**：飞书群 → 设置 → 群机器人 → 添加「自定义机器人」→ 复制 Webhook 地址填入 `FEISHU_WEBHOOK_URL`；安全设置建议选「自定义关键词」并填 `QX`（通知文案已内置该关键词）；若选「签名校验」则把密钥填入 `FEISHU_SECRET`。
-
-4. 打开仓库的 `Actions`，启用工作流后进入 `QX Builder`，点击 `Run workflow` 完成第一次构建。
-5. 构建成功后，将你仓库中的 `QuantumultX_Local.conf` Raw 地址导入 Quantumult X。
-
-之后 GitHub Actions 会每天自动更新；有变化时，生成结果和本地化规则会自动提交回你的仓库。
+> **维护与通知配置**：规则定制（`profiles/config.yaml`）、底包跟进、飞书/Telegram 通知的 Secrets 配置方法见 [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md)。
 
 ---
 

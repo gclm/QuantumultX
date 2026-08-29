@@ -425,7 +425,7 @@ def build_notification_message(build_success, stats, changed_files):
 
 
 def main():
-    logger.info("🚀 === QX Builder V6 Started ===")
+    logger.info("🚀 === QX Builder V6.1 Started ===")
     check_environment()
 
     # 通知通道：env NOTIFY_PROVIDER > config.yaml notify.provider > 默认 feishu

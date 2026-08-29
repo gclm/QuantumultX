@@ -1,4 +1,4 @@
-# QX-Config-Sync 项目文档
+# QuantumultX 自用配置 项目文档
 
 > QuantumultX 配置自动构建与同步工具 V6.1
 
@@ -20,7 +20,7 @@
 
 ## 项目概述
 
-QX-Config-Sync 是一个用于自动构建 QuantumultX 配置文件的开源工具。它通过 YAML 配置文件管理所有规则和策略，支持底包下载、规则注入、远程引用等功能，并通过 GitHub Actions 实现自动化构建和同步。
+本项目（gclm/QuantumultX）是一套 QuantumultX 自用配置的自动构建系统。它通过 YAML 配置文件管理个人增量，基于仓库内自有底包（`profiles/base.conf`）进行合并、规则注入、远程规则本地化，并通过 GitHub Actions 实现自动化构建和三通道分发。
 
 ### 主要特点
 
@@ -434,6 +434,23 @@ manager.add_list_item("filter_local", "ip6-cidr,::/0,direct", position="start")
 
 `.github/workflows/build.yml`
 
+### Secrets 配置（Settings → Secrets and variables → Actions）
+
+| Secret | 是否必需 | 用途 |
+|---|---:|---|
+| `FEISHU_WEBHOOK_URL` | 通知必选 | 飞书自定义机器人 Webhook 地址（默认通知通道） |
+| `FEISHU_SECRET` | 可选 | 飞书机器人开启"签名校验"时的加签密钥 |
+| `NOTIFY_PROVIDER` | 可选 | 通知通道切换：`feishu`（默认）/ `telegram` / `both` |
+| `URL_RAW_PREFIX` | 可选 | Raw 通道前缀，未配置时按仓库名自动推导 |
+| `URL_MIRROR_PREFIX` | 可选 | 镜像通道前缀（jsDelivr） |
+| `URL_CF_PREFIX` | 可选 | Cloudflare Workers 反代通道前缀 |
+| `TELEGRAM_BOT_TOKEN` | 可选 | Telegram 通知的 Bot Token（切换到 telegram 时需要） |
+| `TELEGRAM_CHAT_ID` | 可选 | Telegram 接收通知的 Chat ID |
+
+**飞书通知配置**：飞书群 → 设置 → 群机器人 → 添加「自定义机器人」→ 复制 Webhook 地址填入 `FEISHU_WEBHOOK_URL`；安全设置建议选「自定义关键词」并填 `QX`（通知文案已内置该关键词）；若选「签名校验」则把密钥填入 `FEISHU_SECRET`。
+
+配置完成后在 Actions → QX Builder → Run workflow 手动触发一次构建即可验证通知。
+
 ---
 
 ## V6 可靠性设计
@@ -572,6 +589,21 @@ patches:
 
 ## 版本历史
 
+### V6.1 (当前)
+
+- 仓库迁移至 gclm/QuantumultX，清理 suversal 残留
+- 新增飞书通知（默认，支持加签），provider 可切换 feishu / telegram / both
+- ddgksf2013 V269 固化为自有底包 `profiles/base.conf`，清理专属信息并恢复 udp_whitelist
+- `patches.mitm` 强制清洗证书数据，配置永不携带 MITM 证书
+- 移除 `my_` / `My` 文件名前缀（rules 与产物 conf）
+
+### V6.0
+
+- 三通道分发（Raw / jsDelivr / CF 反代）+ 通道探活
+- 底包快照回退、下载重试与镜像切换、内容校验、提交前 lint
+- 本地化豁免名单 `localize_skip`
+- 迁入 AI 分流、Cursor/Trae、番茄小说等自定义规则
+
 ### V5.1 (Fixed)
 
 - 修复 `filter_remote` 字段处理问题
@@ -589,7 +621,7 @@ patches:
 
 ## 贡献指南
 
-欢迎提交 Issue 和 Pull Request！
+个人自用仓库，欢迎提 Issue 交流。
 
 ---
 
