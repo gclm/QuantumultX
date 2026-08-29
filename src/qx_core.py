@@ -95,7 +95,7 @@ class QXConfigManager:
 
         if not os.path.exists(abs_path):
             # 只有当文件不是示例文件时才警告
-            if "my_custom" not in relative_path:
+            if "custom" not in relative_path:
                 logger.warning(f"⚠️ [Local] 文件未找到: {abs_path}")
             return []
 

@@ -6,7 +6,7 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
 
 **不想研究规则语法？直接使用生成好的配置。想自己掌控？Fork 后只维护一份 `config.yaml`，剩下的交给 GitHub Actions。**
 
-[立即使用本地化配置](https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf) · [镜像加速版](https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/MyQuantumultX_Mirror.conf) · [查看自动构建状态](https://github.com/gclm/QuantumultX/actions)
+[立即使用本地化配置](https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf) · [镜像加速版](https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/QuantumultX_Mirror.conf) · [查看自动构建状态](https://github.com/gclm/QuantumultX/actions)
 
 ---
 
@@ -34,14 +34,14 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
 
    | 通道 | 配置地址 | 适用场景 |
    |---|---|---|
-   | **Raw（主通道）** | `https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf` | 默认首选 |
-   | **Mirror（CDN 镜像）** | `https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/MyQuantumultX_Mirror.conf` | Raw 直连不稳时 |
-   | **CF（自建反代）** | `https://proxy.991201.xyz/https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_CF.conf` | 以上均不稳时 |
+   | **Raw（主通道）** | `https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf` | 默认首选 |
+   | **Mirror（CDN 镜像）** | `https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/QuantumultX_Mirror.conf` | Raw 直连不稳时 |
+   | **CF（自建反代）** | `https://proxy.991201.xyz/https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_CF.conf` | 以上均不稳时 |
 
 3. 在 Quantumult X 中打开配置文件管理，选择“下载配置”，粘贴地址并导入。
 4. 如需使用 HTTPS 重写规则，请在 Quantumult X 中生成、安装并信任 MITM 证书。
 
-`MyQuantumultX_Local.conf` 会优先引用本仓库保存的规则文件，适合日常使用。导入完整配置可能替换你现有的策略与分流，因此第一步请务必备份。
+`QuantumultX_Local.conf` 会优先引用本仓库保存的规则文件，适合日常使用。导入完整配置可能替换你现有的策略与分流，因此第一步请务必备份。
 
 > **节点订阅不随配置分发**：本配置不包含任何机场订阅链接（策略组通过 `server-tag-regex` 正则自动分组，兼容任意机场）。请在 Quantumult X 的「订阅」区自行添加并维护你的节点订阅。
 
@@ -75,7 +75,7 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
    > **飞书通知配置**：飞书群 → 设置 → 群机器人 → 添加「自定义机器人」→ 复制 Webhook 地址填入 `FEISHU_WEBHOOK_URL`；安全设置建议选「自定义关键词」并填 `QX`（通知文案已内置该关键词）；若选「签名校验」则把密钥填入 `FEISHU_SECRET`。
 
 4. 打开仓库的 `Actions`，启用工作流后进入 `QX Builder`，点击 `Run workflow` 完成第一次构建。
-5. 构建成功后，将你仓库中的 `MyQuantumultX_Local.conf` Raw 地址导入 Quantumult X。
+5. 构建成功后，将你仓库中的 `QuantumultX_Local.conf` Raw 地址导入 Quantumult X。
 
 之后 GitHub Actions 会每天自动更新；有变化时，生成结果和本地化规则会自动提交回你的仓库。
 
@@ -99,10 +99,10 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
 建议先尝试“下载配置”，使用本项目的本地化配置地址：
 
 ```text
-https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf
+https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf
 ```
 
-如果当前网络无法访问 GitHub Raw，可以先在电脑或浏览器中下载 `MyQuantumultX_Local.conf`，发送到 iPhone 后再选择“导入配置”。
+如果当前网络无法访问 GitHub Raw，可以先在电脑或浏览器中下载 `QuantumultX_Local.conf`，发送到 iPhone 后再选择“导入配置”。
 
 > 导入完整配置可能替换现有的策略组、分流和重写设置，请先备份当前配置。
 
@@ -240,7 +240,7 @@ https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf
 - **内容校验**：空文件、HTML 错误页会被识别并拒绝写入快照，防止坏内容覆盖好规则。
 - **下载间隔保护**：每次下载后等待 1 秒，降低请求过于频繁而被上游限制的概率。
 - **单项失败兼容**：某个远程文件下载失败时保留可用链接并继续构建，不让单个上游故障拖垮整份配置。
-- **多配置输出**：同时生成保留原始链接的 `MyQuantumultX.conf`（调试参考）和三条分发通道的本地化配置。
+- **多配置输出**：同时生成保留原始链接的 `QuantumultX.conf`（调试参考）和三条分发通道的本地化配置。
 
 ---
 
@@ -255,18 +255,18 @@ QuantumultX/
 │   └── config.yaml           # 👈 你的核心配置文件（改这里！）
 ├── images/                   # README 使用的 Quantumult X 操作截图
 ├── rules/                     # 存放本地化后的规则文件
-│   ├── my_custom.list        # 自定义分流（个人规则/番茄小说去广告等）
-│   ├── my_dev.list           # 开发者工具分流（Cursor/Trae 等）
+│   ├── custom.list        # 自定义分流（个人规则/番茄小说去广告等）
+│   ├── dev.list           # 开发者工具分流（Cursor/Trae 等）
 │   ├── filter_remote/        # 本地化后的远程分流规则
 │   └── rewrite_remote/       # 本地化后的远程重写规则
 ├── src/
 │   ├── main.py               # 主程序入口
 │   ├── qx_core.py            # 核心处理逻辑
 │   └── notify.py             # 通知模块（飞书/Telegram）
-├── MyQuantumultX.conf        # [生成] 原始远程链接配置（调试参考）
-├── MyQuantumultX_Local.conf  # [生成] Raw 通道配置（推荐使用）
-├── MyQuantumultX_Mirror.conf # [生成] jsDelivr 镜像通道配置
-├── MyQuantumultX_CF.conf     # [生成] Cloudflare Workers 反代通道配置
+├── QuantumultX.conf        # [生成] 原始远程链接配置（调试参考）
+├── QuantumultX_Local.conf  # [生成] Raw 通道配置（推荐使用）
+├── QuantumultX_Mirror.conf # [生成] jsDelivr 镜像通道配置
+├── QuantumultX_CF.conf     # [生成] Cloudflare Workers 反代通道配置
 └── README.md
 ```
 
@@ -295,10 +295,10 @@ python src/main.py
 
 | 配置文件 | 分发链路 | 说明 |
 |---------|---------|------|
-| `MyQuantumultX.conf` | 上游原始链接 | 只合并不本地化，用于调试比对 |
-| `MyQuantumultX_Local.conf` | GitHub Raw | **主通道**，规则快照全部在本仓库 |
-| `MyQuantumultX_Mirror.conf` | jsDelivr CDN | 镜像通道，Raw 直连不稳时使用 |
-| `MyQuantumultX_CF.conf` | Cloudflare Workers | 自建反代通道，前两者失效时使用 |
+| `QuantumultX.conf` | 上游原始链接 | 只合并不本地化，用于调试比对 |
+| `QuantumultX_Local.conf` | GitHub Raw | **主通道**，规则快照全部在本仓库 |
+| `QuantumultX_Mirror.conf` | jsDelivr CDN | 镜像通道，Raw 直连不稳时使用 |
+| `QuantumultX_CF.conf` | Cloudflare Workers | 自建反代通道，前两者失效时使用 |
 
 > 💡 三份本地化配置内容完全相同，仅链接前缀不同。哪个链路在你的网络环境下可达就用哪个；Telegram 日报会推送每条链路的探活结果。
 
@@ -422,7 +422,7 @@ server_remote:
 ```yaml
 local_filters:
   top:
-    - "file://rules/my_custom.list"  # 从本地文件读取规则
+    - "file://rules/custom.list"  # 从本地文件读取规则
     - "ip6-cidr,::/0,direct"           # 或者直接写在这里
   bottom:
     - "geoip,cn,direct"
@@ -455,7 +455,7 @@ filter_remote:
 ### 🔹 `rewrite_local` - 本地重写（可选）
 ```yaml
 rewrite_local:
-  - "file://rules/my_rewrites.list" # 从本地文件读取
+  - "file://rules/rewrites.list" # 从本地文件读取
   - "^https://google.cn url 302 https://google.com" # 直接写在这里
 ```
 **作用**：添加你自己的本地重写规则（重写用来做去广告、修改响应、跳转等）。
@@ -496,7 +496,7 @@ task_local:
 ### 🔹 `mitm` - MITM 配置（可选）
 ```yaml
 mitm:
-  hostname: "file://rules/my_mitm_hosts.list"
+  hostname: "file://rules/mitm_hosts.list"
 ```
 **作用**：配置 HTTPS 解密需要的域名列表。
 
@@ -553,9 +553,9 @@ A: 默认是每天北京时间早上 6 点自动构建一次，保证你拿到�
 
 ### Q: 构建完了怎么在 Quantumult X 使用？
 A: 三份本地化配置任选可达的一条链路：
-- Raw：`https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf`
-- 镜像：`https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/MyQuantumultX_Mirror.conf`
-- CF 反代：`https://你的Worker域名/https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_CF.conf`
+- Raw：`https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf`
+- 镜像：`https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/QuantumultX_Mirror.conf`
+- CF 反代：`https://你的Worker域名/https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_CF.conf`
 
 打开 Quantumult X → 配置 → 下载配置 → 填入链接 → 导入就可以用了。
 

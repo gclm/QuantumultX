@@ -50,10 +50,10 @@ QuantumultX/
 │   ├── base.conf              # 自有底包（ddgksf2013 V269 固化 + 专属信息清理）
 │   └── config.yaml             # 主配置文件
 ├── rules/                      # 规则目录
-│   ├── my_custom.list          # 自定义分流规则（个人规则/番茄小说去广告）
-│   ├── my_dev.list             # 开发者工具分流（Cursor/Trae 等）
-│   ├── my_mitm_hosts.list      # MITM hostname 配置
-│   ├── my_rewrites.list        # 重写规则
+│   ├── custom.list          # 自定义分流规则（个人规则/番茄小说去广告）
+│   ├── dev.list             # 开发者工具分流（Cursor/Trae 等）
+│   ├── mitm_hosts.list      # MITM hostname 配置
+│   ├── rewrites.list        # 重写规则
 │   ├── filter_remote/          # [生成] 本地化后的远程分流规则
 │   └── rewrite_remote/         # [生成] 本地化后的远程重写规则
 ├── src/
@@ -62,10 +62,10 @@ QuantumultX/
 │   └── notify.py               # 通知模块（飞书/Telegram，provider 可切换）
 ├── requirements.txt            # Python 依赖
 ├── .gitignore                  # Git 忽略规则
-├── MyQuantumultX.conf          # [生成] 原始远程链接配置（调试参考）
-├── MyQuantumultX_Local.conf    # [生成] Raw 通道配置（主通道）
-├── MyQuantumultX_Mirror.conf   # [生成] jsDelivr 镜像通道配置
-└── MyQuantumultX_CF.conf       # [生成] Cloudflare Workers 反代通道配置
+├── QuantumultX.conf          # [生成] 原始远程链接配置（调试参考）
+├── QuantumultX_Local.conf    # [生成] Raw 通道配置（主通道）
+├── QuantumultX_Mirror.conf   # [生成] jsDelivr 镜像通道配置
+└── QuantumultX_CF.conf       # [生成] Cloudflare Workers 反代通道配置
 ```
 
 ---
@@ -136,7 +136,7 @@ manager.add_list_item("filter_local", rule, position="start")
 ```yaml
 local_filters:
   top:
-    - "file://rules/my_custom.list"
+    - "file://rules/custom.list"
 ```
 
 ### 6. 远程规则引用
@@ -193,10 +193,10 @@ python src/main.py
 
 | 文件 | 分发链路 |
 |------|---------|
-| `MyQuantumultX.conf` | 上游原始链接（调试参考） |
-| `MyQuantumultX_Local.conf` | GitHub Raw（主通道） |
-| `MyQuantumultX_Mirror.conf` | jsDelivr CDN 镜像 |
-| `MyQuantumultX_CF.conf` | Cloudflare Workers 反代 |
+| `QuantumultX.conf` | 上游原始链接（调试参考） |
+| `QuantumultX_Local.conf` | GitHub Raw（主通道） |
+| `QuantumultX_Mirror.conf` | jsDelivr CDN 镜像 |
+| `QuantumultX_CF.conf` | Cloudflare Workers 反代 |
 
 ### 在 QuantumultX 中使用
 
@@ -291,7 +291,7 @@ server_remote:
 ```yaml
 local_filters:
   top:
-    - "file://rules/my_custom.list"
+    - "file://rules/custom.list"
     - "ip6-cidr,::/0,direct"
   bottom:
     - "geoip,cn,direct"
@@ -322,7 +322,7 @@ filter_remote:
 
 ```yaml
 rewrite_local:
-  - "file://rules/my_rewrites.list"
+  - "file://rules/rewrites.list"
   - "^https://google.cn url 302 https://google.com"
 
 rewrite_remote:
@@ -333,7 +333,7 @@ rewrite_remote:
 
 ```yaml
 mitm:
-  hostname: "file://rules/my_mitm_hosts.list"
+  hostname: "file://rules/mitm_hosts.list"
 ```
 
 MITM hostname 必须是一行，用逗号分隔：
@@ -478,9 +478,9 @@ config.yaml base:
 
 | 通道 | 前缀（环境变量覆盖） | 产物 |
 |------|--------------------|------|
-| Local | `URL_RAW_PREFIX`，默认 `https://raw.githubusercontent.com/{repo}/main/rules` | `MyQuantumultX_Local.conf` |
-| Mirror | `URL_MIRROR_PREFIX`，默认 `https://testingcf.jsdelivr.net/gh/{repo}@main/rules` | `MyQuantumultX_Mirror.conf` |
-| CF | `URL_CF_PREFIX`，默认 `https://proxy.991201.xyz/https://raw.githubusercontent.com/{repo}/main/rules` | `MyQuantumultX_CF.conf` |
+| Local | `URL_RAW_PREFIX`，默认 `https://raw.githubusercontent.com/{repo}/main/rules` | `QuantumultX_Local.conf` |
+| Mirror | `URL_MIRROR_PREFIX`，默认 `https://testingcf.jsdelivr.net/gh/{repo}@main/rules` | `QuantumultX_Mirror.conf` |
+| CF | `URL_CF_PREFIX`，默认 `https://proxy.991201.xyz/https://raw.githubusercontent.com/{repo}/main/rules` | `QuantumultX_CF.conf` |
 
 构建末尾对三条链路各探测一次（带一次重试），结果随通知日报推送。探活验证的是服务存活，不等价于国内可达性。
 
@@ -534,7 +534,7 @@ policy:
 
 ### Q4: MITM hostname 如何配置？
 
-**A:** 在 `rules/my_mitm_hosts.list` 中配置（注意必须是一行，逗号分隔）：
+**A:** 在 `rules/mitm_hosts.list` 中配置（注意必须是一行，逗号分隔）：
 
 ```
 *.google.com, *.googleapis.com, *.apple.com
@@ -544,7 +544,7 @@ policy:
 
 ```yaml
 mitm:
-  hostname: "file://rules/my_mitm_hosts.list"
+  hostname: "file://rules/mitm_hosts.list"
 ```
 
 ### Q5: 如何删除底包中的某些配置？

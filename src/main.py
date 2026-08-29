@@ -28,7 +28,7 @@ except ImportError as e:
 # 项目根目录 (src 的上一级)
 BASE_DIR = os.path.dirname(current_dir)
 CONFIG_PATH = os.path.join(BASE_DIR, "profiles", "config.yaml")
-OUTPUT_FILE = os.path.join(BASE_DIR, "MyQuantumultX.conf")
+OUTPUT_FILE = os.path.join(BASE_DIR, "QuantumultX.conf")
 RULES_DIR = os.path.join(BASE_DIR, "rules")
 # 底包快照：上游底包站点失效时回退，保证构建永不产出空配置覆盖线上
 BASE_SNAPSHOT_FILE = os.path.join(BASE_DIR, "Origin_Quantumultx.conf")
@@ -46,19 +46,19 @@ def build_channels():
     return [
         {
             "name": "Local",
-            "output": os.path.join(BASE_DIR, "MyQuantumultX_Local.conf"),
+            "output": os.path.join(BASE_DIR, "QuantumultX_Local.conf"),
             "prefix": os.environ.get("URL_RAW_PREFIX")
             or f"https://raw.githubusercontent.com/{DEFAULT_REPO}/main/rules",
         },
         {
             "name": "Mirror",
-            "output": os.path.join(BASE_DIR, "MyQuantumultX_Mirror.conf"),
+            "output": os.path.join(BASE_DIR, "QuantumultX_Mirror.conf"),
             "prefix": os.environ.get("URL_MIRROR_PREFIX")
             or f"https://testingcf.jsdelivr.net/gh/{DEFAULT_REPO}@main/rules",
         },
         {
             "name": "CF",
-            "output": os.path.join(BASE_DIR, "MyQuantumultX_CF.conf"),
+            "output": os.path.join(BASE_DIR, "QuantumultX_CF.conf"),
             "prefix": os.environ.get("URL_CF_PREFIX")
             or f"https://proxy.991201.xyz/https://raw.githubusercontent.com/{DEFAULT_REPO}/main/rules",
         },
@@ -569,7 +569,10 @@ def main():
         # 检查文件变化 (全部产物 + 快照 + 规则目录)
         logger.info("🔍 [Check] 检查配置文件和规则是否有变化...")
         changed_files = []
-        monitor_files = [OUTPUT_FILE] + [ch["output"] for ch in channels] + [BASE_SNAPSHOT_FILE]
+        # 仅监测真实产物；url 模式的底包快照单独判断（不存在时跳过）
+        monitor_files = [OUTPUT_FILE] + [ch["output"] for ch in channels]
+        if fresh_content is not None:
+            monitor_files.append(BASE_SNAPSHOT_FILE)
         for f in monitor_files:
             if check_file_changed(f):
                 changed_files.append(f)

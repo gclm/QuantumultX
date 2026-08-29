@@ -116,11 +116,11 @@ local_filters:
   # Top: 插到最前面 (优先级最高)
   top:
     # 注意顺序：QX 按顺序匹配，先出现者优先。
-    # my_dev.list 必须在 my_custom.list 之前，否则 custom 里的
+    # dev.list 必须在 custom.list 之前，否则 custom 里的
     # host-suffix,bytedance.com,reject 会吞掉 Trae 的 bytedance 系域名
-    - "file://rules/my_dev.list"
+    - "file://rules/dev.list"
     # 方式A: 引用 rules 目录下的文件 (如果文件不存在，脚本会自动跳过不报错)
-    - "file://rules/my_custom.list"
+    - "file://rules/custom.list"
     # 方式B: 直接写在这里
     # IPv6 直连（所有 IPv6 流量不走代理）
     #- "ip6-cidr,::/0,direct"
@@ -169,7 +169,7 @@ localize_skip:
 # ------------------------------------------------------------------------------
 rewrite_local:
   # 引用文件
-  - "file://rules/my_rewrites.list"
+  - "file://rules/rewrites.list"
   # 直接写规则
   #- "^https://google.cn url 302 https://google.com"
 
@@ -191,7 +191,7 @@ rewrite_remote:
 # [其他] 任务与节点
 # ------------------------------------------------------------------------------
 task_local:
-# - "file://rules/my_tasks.conf"
+# - "file://rules/tasks.conf"
 # - "0 9 * * * https://example.com/sign.js, tag=每日签到"
 
 http_backend:
@@ -203,4 +203,4 @@ http_backend:
 mitm:
   # Hostname 列表 (追加/覆盖)
   # 这是一个很长的字符串，强烈建议放在文件里引用
-  #hostname: "file://rules/my_mitm_hosts.list"
+  #hostname: "file://rules/mitm_hosts.list"

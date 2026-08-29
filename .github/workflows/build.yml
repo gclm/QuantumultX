@@ -61,7 +61,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "QX Builder"
           # 添加生成的配置（原链版 + 三条分发通道）；底包为本地 profiles/base.conf，无需提交快照
-          git add MyQuantumultX.conf MyQuantumultX_Local.conf MyQuantumultX_Mirror.conf MyQuantumultX_CF.conf
+          git add QuantumultX.conf QuantumultX_Local.conf QuantumultX_Mirror.conf QuantumultX_CF.conf
           git add rules/filter_remote/ rules/rewrite_remote/
           # 如果文件有变化则提交，没变化则跳过 (防止报错)
           git diff-index --quiet HEAD || git commit -m "Auto-build config $(date +'%Y-%m-%d')"
