@@ -1,0 +1,27 @@
+# 开发者工具 / AI 编码服务分流（迁移自 gclm/QuantumultX v1.0 Surge/cursor.conf、Surge/trae.conf）
+# Surge DOMAIN-SUFFIX 语法已转换为 QX host-suffix 语法
+
+# > Cursor
+host-suffix, cursor.com, 美国节点
+host-suffix, cursor.sh, 美国节点
+host-suffix, cursor-cdn.com, 美国节点
+host-suffix, cursorapi.com, 美国节点
+
+# > ElevenLabs
+host-suffix, elevenlabs.io, 美国节点
+
+# > WorkOS (Cursor 账号体系)
+host-suffix, workos.com, 美国节点
+
+# > Trae
+host-suffix, trae.ai, 美国节点
+host-suffix, trae.com.cn, 美国节点
+host-suffix, byteoversea.com, 美国节点
+host-suffix, trae-api-sg.mchost.guru, 美国节点
+host-suffix, lf3-static.bytednsdoc.com, 美国节点
+host-suffix, bytegate-sg.byteintlapi.com, 美国节点
+host-suffix, abtestvm-sg.bytedance.com, 美国节点
+host-suffix, tron-sg.bytelemon.com, 美国节点
+host-suffix, sf16-short-sg.bytedapm.com, 美国节点
+host-suffix, tron.jiyunhudong.com, 美国节点
+host-suffix, starling.zijieapi.com, 美国节点

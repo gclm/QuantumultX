@@ -1,0 +1,64 @@
+name: QX Builder
+
+# 触发机制
+on:
+  schedule:
+    # 北京时间每天早上 06:00 自动运行 (UTC 22:00)
+    - cron: '0 22 * * *'
+  workflow_dispatch: # 允许你在 GitHub 网页上手动点按钮运行
+  push:
+    # 只有当以下目录的文件发生变动时才触发，避免改个 README 也跑一遍
+    paths:
+      - 'profiles/**'
+      - 'rules/**'
+      - 'src/**'
+      - 'requirements.txt'
+
+# 权限设置：允许 Action 修改仓库内容 (为了提交生成的 .conf 文件)
+permissions:
+  contents: write
+
+# 防止构建并发执行导致互相覆盖提交
+concurrency:
+  group: qx-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 拉取代码
+      - uses: actions/checkout@v5
+
+      # 2. 准备 Python 环境
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 3. 安装依赖
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 4. 执行构建脚本
+      # 构建失败时脚本以非零码退出，本步骤失败会阻止后续提交，线上配置不受影响
+      - name: Run Builder
+        run: python src/main.py
+        env:
+          # 三条分发通道前缀（未配置时脚本按 GITHUB_REPOSITORY 自动推导默认值）
+          URL_RAW_PREFIX: ${{ secrets.URL_RAW_PREFIX }}
+          URL_MIRROR_PREFIX: ${{ secrets.URL_MIRROR_PREFIX }}
+          URL_CF_PREFIX: ${{ secrets.URL_CF_PREFIX }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      # 5. 提交生成的文件回仓库
+      - name: Commit and Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "QX Builder"
+          # 添加生成的配置（原链版 + 三条分发通道）和底包快照
+          git add MyQuantumultX.conf MyQuantumultX_Local.conf MyQuantumultX_Mirror.conf MyQuantumultX_CF.conf Origin_Quantumultx.conf
+          git add rules/filter_remote/ rules/rewrite_remote/
+          # 如果文件有变化则提交，没变化则跳过 (防止报错)
+          git diff-index --quiet HEAD || git commit -m "Auto-build config $(date +'%Y-%m-%d')"
+          git push

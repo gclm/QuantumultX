@@ -1,0 +1,94 @@
+# 自定义分流 神龙
+host-suffix,sub.wxhby.com,美国节点
+host-suffix,shenlong.wiki,美国节点
+host-suffix,internal-api-svc.wxhby.com,美国节点
+
+#墨鱼
+host-suffix,ddgksf2013.top,美国节点
+
+# 我的网站域名
+host-suffix,suversal.com,direct
+
+#CM
+host-suffix,cmliussss.com,美国节点
+
+#github
+host-keyword, github, 美国节点
+
+# Apple Intelligence
+host,apple-relay.apple.com,美国节点
+host,apple-relay.fastly-edge.com,美国节点
+host,apple-relay.cloudflare.com,美国节点
+host,gateway.icloud.com,美国节点
+host,guzzoni.apple.com,美国节点
+host,cp4.cloudflare.com,美国节点
+host,gspe1-ssl.ls.apple.com,美国节点
+host,apps.mzstatic.com,美国节点
+host,*.smoot.apple.com,美国节点
+host-suffix,apple-relay.akamaized.net,美国节点
+host-suffix,apple-relay.mask.apple-dns.net,美国节点
+
+# App Store 美区节点下可能会导致App Store无法打开
+HOST, APPS.MZSTATIC.COM, direct
+
+# 网易云音乐听歌统计
+host-suffix,clientlog.music.163.com,direct
+host-suffix,clientlog3.music.163.com,direct
+host-suffix,clientlogdep.music.163.com,direct
+host-suffix,clientlogsf.music.163.com,direct
+host-suffix,httpdns.music.163.com,direct
+host-suffix,sentry.music.163.com,direct
+host-suffix,netapm.music.163.com,direct
+
+# ===== 番茄小说去广告（迁移自 gclm/QuantumultX v1.0 filter/fqnovelvod.list）=====
+host, p6-ad-sign.byteimg.com, reject
+host, p9-ad-sign.byteimg.com, reject
+host, i.snssdk.com, reject
+host, i-lq.snssdk.com, reject
+host, dig.bdurl.net, reject
+host-suffix, zijieapi.com, reject
+host, activity-ag.awemeughun.com, reject
+host, mcs.snssdk.com, reject
+host, tnc3-alisc1.snssdk.com, reject
+host, security-lq.snssdk.com, reject
+host, tnc3-aliec2.snssdk.com, reject
+host, is.snssdk.com, reject
+host, msync-im1-vip6-std.easemob.com, reject
+host, apd-pcdnwxlogin.teg.tencent-cloud.net, reject
+host, api.iegadp.qq.com, reject
+host, sf3-ttcdn-tos.pstatp.com, reject
+host-suffix, pglstatp-toutiao.com, reject
+host, *default.ixigua.com, reject
+host, v6-novelapp.ixigua.com, reject
+host, *novelapp.ixigua.com, reject
+host-suffix, byteorge.com, reject
+host-suffix, bytegoofy.com, reject
+host-suffix, bytedance.com, reject
+ip-cidr, 49.71.37.101/32, reject
+ip-cidr, 117.71.105.23/32, reject
+ip-cidr, 218.94.207.205/32, reject
+ip-cidr, 117.92.229.188/32, reject
+ip-cidr, 101.36.166.16/32, reject
+ip-cidr, 180.96.2.114/32, reject
+host, s2s.adjust.cn, reject
+host, ocsp.digicert.cn, reject
+host, lf-cdn-tos.bytescm.com, reject
+host, applog.snssdk.com, reject
+host, webcast5-open-lq.douyin.com, reject
+host, tnc3-bjlgy.snssdk.com, reject
+host, mon.toutiaocloud.net, reject
+host, api3-normal-lq.fqnovel.com, reject
+host, vas-lf-x.snssdk.com, reject
+host, mon3-misc-lq.fqnovel.com, reject
+host, api5-normal-lq.fqnovel.com, reject
+host, mon11-misc-lq.fqnovel.com, reject
+host, log5-applog-lq.fqnovel.com, reject
+host, rtlog3-applog-lq.fqnovel.com, reject
+host, wvvvv.9377.cn, reject
+host, rtlog5-applog-lq.fqnovel.com, reject
+host, receiver.data.lianjia.com, reject
+host, ecom3-normal-lq.ecombdapi.com, reject
+host, ec3-core-lq.ecombdapi.com, reject
+host, ec5-core-lq.ecombdapi.com, reject
+host, p1.pstatp.com, reject
+
