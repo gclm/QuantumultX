@@ -6,7 +6,7 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
 
 **不想研究规则语法？直接使用生成好的配置。想自己掌控？Fork 后只维护一份 `config.yaml`，剩下的交给 GitHub Actions。**
 
-[立即使用本地化配置](https://raw.githubusercontent.com/suversal/qx-config-sync/main/MyQuantumultX_Local.conf) · [镜像加速版](https://testingcf.jsdelivr.net/gh/suversal/qx-config-sync@main/MyQuantumultX_Mirror.conf) · [查看自动构建状态](https://github.com/suversal/qx-config-sync/actions)
+[立即使用本地化配置](https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf) · [镜像加速版](https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/MyQuantumultX_Mirror.conf) · [查看自动构建状态](https://github.com/gclm/QuantumultX/actions)
 
 ---
 
@@ -34,9 +34,9 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
 
    | 通道 | 配置地址 | 适用场景 |
    |---|---|---|
-   | **Raw（主通道）** | `https://raw.githubusercontent.com/suversal/qx-config-sync/main/MyQuantumultX_Local.conf` | 默认首选 |
-   | **Mirror（CDN 镜像）** | `https://testingcf.jsdelivr.net/gh/suversal/qx-config-sync@main/MyQuantumultX_Mirror.conf` | Raw 直连不稳时 |
-   | **CF（自建反代）** | `https://proxy.991201.xyz/https://raw.githubusercontent.com/suversal/qx-config-sync/main/MyQuantumultX_CF.conf` | 以上均不稳时 |
+   | **Raw（主通道）** | `https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf` | 默认首选 |
+   | **Mirror（CDN 镜像）** | `https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/MyQuantumultX_Mirror.conf` | Raw 直连不稳时 |
+   | **CF（自建反代）** | `https://proxy.991201.xyz/https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_CF.conf` | 以上均不稳时 |
 
 3. 在 Quantumult X 中打开配置文件管理，选择“下载配置”，粘贴地址并导入。
 4. 如需使用 HTTPS 重写规则，请在 Quantumult X 中生成、安装并信任 MITM 证书。
@@ -63,11 +63,16 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
 
    | Secret | 是否必需 | 用途 |
    |---|---:|---|
+   | `FEISHU_WEBHOOK_URL` | 通知必选 | 飞书自定义机器人 Webhook 地址（默认通知通道） |
+   | `FEISHU_SECRET` | 可选 | 飞书机器人开启"签名校验"时的加签密钥 |
+   | `NOTIFY_PROVIDER` | 可选 | 通知通道切换：`feishu`（默认）/ `telegram` / `both` |
    | `URL_RAW_PREFIX` | 可选 | Raw 通道前缀，未配置时按仓库名自动推导 |
    | `URL_MIRROR_PREFIX` | 可选 | 镜像通道前缀（jsDelivr） |
    | `URL_CF_PREFIX` | 可选 | Cloudflare Workers 反代通道前缀 |
-   | `TELEGRAM_BOT_TOKEN` | 可选 | Telegram 构建通知的 Bot Token |
-   | `TELEGRAM_CHAT_ID` | 可选 | 接收构建通知的 Chat ID |
+   | `TELEGRAM_BOT_TOKEN` | 可选 | Telegram 通知的 Bot Token（切换到 telegram 时需要） |
+   | `TELEGRAM_CHAT_ID` | 可选 | Telegram 接收通知的 Chat ID |
+
+   > **飞书通知配置**：飞书群 → 设置 → 群机器人 → 添加「自定义机器人」→ 复制 Webhook 地址填入 `FEISHU_WEBHOOK_URL`；安全设置建议选「自定义关键词」并填 `QX`（通知文案已内置该关键词）；若选「签名校验」则把密钥填入 `FEISHU_SECRET`。
 
 4. 打开仓库的 `Actions`，启用工作流后进入 `QX Builder`，点击 `Run workflow` 完成第一次构建。
 5. 构建成功后，将你仓库中的 `MyQuantumultX_Local.conf` Raw 地址导入 Quantumult X。
@@ -94,7 +99,7 @@ QX-Config-Sync 不只是一套“配置同步脚本”。它首先是一份面�
 建议先尝试“下载配置”，使用本项目的本地化配置地址：
 
 ```text
-https://raw.githubusercontent.com/suversal/qx-config-sync/main/MyQuantumultX_Local.conf
+https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf
 ```
 
 如果当前网络无法访问 GitHub Raw，可以先在电脑或浏览器中下载 `MyQuantumultX_Local.conf`，发送到 iPhone 后再选择“导入配置”。
@@ -168,12 +173,13 @@ https://raw.githubusercontent.com/suversal/qx-config-sync/main/MyQuantumultX_Loc
 - 自动拉取最新底包、同步上游规则并生成最新配置。
 - 检测到变化后自动提交回你的仓库，让日常使用的配置持续更新。
 
-### 📩 Telegram 构建通知
+### 📩 构建通知（飞书 / Telegram）
 
-- **构建成功**：显示本次下载了多少规则、哪些文件发生变化。
+- 默认通过**飞书群机器人 Webhook** 推送，也支持 Telegram，或双通道同时发送（`notify.provider` 切换）。
+- **构建成功**：显示本次下载了多少规则、哪些文件发生变化、三条链路探活结果。
 - **构建失败**：直接推送错误信息，不必先去 GitHub Actions 中翻找日志。
 - 配置有变化时会提醒，无变化时也会报告当前状态。
-- 支持 HTML 格式消息，仓库、提交、统计和错误信息更清晰。
+- 所选通道凭证缺失或发送失败时，自动降级到另一通道并记录日志。
 
 ### 🌏 远程规则本地化
 
@@ -187,13 +193,20 @@ https://raw.githubusercontent.com/suversal/qx-config-sync/main/MyQuantumultX_Loc
 ### 🕸️ 三通道分发
 
 - 每次构建同时产出三份链接不同、内容相同的配置：**Raw 版 / jsDelivr 镜像版 / Cloudflare Workers 反代版**。
-- 构建时自动对三条链路探活，结果随 Telegram 日报推送，哪条链路失效一目了然。
+- 构建时自动对三条链路探活，结果随通知日报推送，哪条链路失效一目了然。
 - 某条链路不可达时，在 Quantumult X 中换导入另一份配置即可，无需任何手工修改。
 
-### 🧯 底包快照保护
+### 🧱 自有底包
 
-- 上游底包站点失效时，自动回退到仓库中的底包快照（`Origin_Quantumultx.conf`），构建照常完成。
-- 构建成功时自动刷新快照，保证回退内容始终是最近一次的好配置。
+- 底包固化为本仓库的 `profiles/base.conf`，基于 [ddgksf2013 小白配置 2.0 (V269)](https://github.com/ddgksf2013/Profile) 整理，不再依赖第三方站点的实时可用性。
+- 固化时已清理原配置的专属信息：作者水印/更新日志/推广注释、tag 中的 `@ddgksf2013` 后缀、其个人域名的代理分流行、免费公共订阅行、两条内容已被上游掏空的空壳规则（GoogleVoice / StreamingSE）。
+- 唯一功能改动：`udp_whitelist=1-442, 444-65535` 恢复生效（避免油管/小红书去广告失效）。
+- 想跟进墨鱼的后续更新：对比 [上游配置](https://ddgksf2013.top/Profile/QuantumultX.conf) 与 `profiles/base.conf`，手动合并后提交即可触发重新构建。
+
+### 🧯 底包快照保护（url 模式）
+
+- 底包默认走本地 `profiles/base.conf`，无外部依赖；若改回 `url` 模式跟踪上游，则享有快照保护：
+- 上游底包站点失效时，自动回退到仓库中的底包快照，构建照常完成。
 - 底包与快照同时失效时，构建**快速失败且不提交**，绝不用残缺配置覆盖线上。
 - 提交前对输出配置做 lint 校验（策略组/分流/重写数量阈值），异常配置无法进入仓库。
 
@@ -234,10 +247,11 @@ https://raw.githubusercontent.com/suversal/qx-config-sync/main/MyQuantumultX_Loc
 ## 📂 项目结构
 
 ```yaml
-qx-config-sync/
+QuantumultX/
 ├── .github/workflows/
 │   └── build.yml              # GitHub Action 自动构建配置
 ├── profiles/
+│   ├── base.conf              # 自有底包（ddgksf2013 V269 固化 + 专属信息清理）
 │   └── config.yaml           # 👈 你的核心配置文件（改这里！）
 ├── images/                   # README 使用的 Quantumult X 操作截图
 ├── rules/                     # 存放本地化后的规则文件
@@ -247,12 +261,12 @@ qx-config-sync/
 │   └── rewrite_remote/       # 本地化后的远程重写规则
 ├── src/
 │   ├── main.py               # 主程序入口
-│   └── qx_core.py            # 核心处理逻辑
+│   ├── qx_core.py            # 核心处理逻辑
+│   └── notify.py             # 通知模块（飞书/Telegram）
 ├── MyQuantumultX.conf        # [生成] 原始远程链接配置（调试参考）
 ├── MyQuantumultX_Local.conf  # [生成] Raw 通道配置（推荐使用）
 ├── MyQuantumultX_Mirror.conf # [生成] jsDelivr 镜像通道配置
 ├── MyQuantumultX_CF.conf     # [生成] Cloudflare Workers 反代通道配置
-├── Origin_Quantumultx.conf   # [维护] 底包快照（上游失效时自动回退）
 └── README.md
 ```
 
@@ -294,14 +308,25 @@ python src/main.py
 
 `profiles/config.yaml` 是你唯一需要维护的文件，下面逐段解释每一部分怎么用：
 
-### 🔹 `base` - 底包地址（必须）
+### 🔹 `base` - 底包（必须）
 ```yaml
 base:
-  url: "https://ddgksf2013.top/Profile/QuantumultX.conf"
+  file: "profiles/base.conf"    # 本地底包（默认，随仓库版本管理，无外部依赖）
+  # url: "https://ddgksf2013.top/Profile/QuantumultX.conf"  # 改为跟踪上游时启用（带快照回退）
 ```
-**作用**：你的整个配置基于这个"底包"来修改，底包一般是大佬维护好的完整配置，你只需要增量修改它。
+**作用**：你的整个配置基于这个"底包"来修改，你只需要增量修改它。
 
-**推荐**：默认已经填好了 ddgksf2013 的底包，直接用就好。
+- 默认使用仓库内的 `profiles/base.conf`（基于 ddgksf2013 小白配置 2.0 V269 固化，已清理原作者专属信息并恢复 udp_whitelist，详见文件头注释）。
+- 想跟进上游更新：对比上游最新配置与 `base.conf` 手动合并；或注释 `file`、启用 `url` 回到跟踪模式（上游失效时自动回退仓库快照）。
+
+---
+
+### 🔹 `notify` - 通知通道（可选）
+```yaml
+notify:
+  provider: "feishu"   # feishu（默认）| telegram | both
+```
+**作用**：构建结果推送到飞书群机器人（默认）或 Telegram，也可双通道同发。环境变量 `NOTIFY_PROVIDER` 优先级更高；所选通道凭证缺失时自动降级另一通道。凭证配置见上方 Secrets 表格。
 
 ---
 
@@ -339,7 +364,7 @@ general:
 ### 🔹 `dns` - 自定义 DNS（可选）
 ```yaml
 dns:
-  - "server=/suversal.com/192.168.1.1" # 你的内网域名走内网 DNS
+  - "server=/example.com/192.168.1.1" # 你的内网域名走内网 DNS
 ```
 **作用**：添加自定义 DNS 规则。
 
@@ -511,7 +536,11 @@ A: 内容完全相同，任选可达的即可：
 - 默认用 **Local**（GitHub Raw）；
 - Raw 打不开就换 **Mirror**（jsDelivr 镜像）；
 - 都不稳就用 **CF**（Cloudflare Workers 反代）。
-每次构建后的 Telegram 日报会附上三条链路的探活结果。已在 QX 中使用旧链接的，换导入新链接后记得删除旧的远程配置引用。
+每次构建后的通知日报会附上三条链路的探活结果。已在 QX 中使用旧链接的，换导入新链接后记得删除旧的远程配置引用。
+
+### Q: 每次更新配置都需要重新生成 MITM 证书吗？
+A: **不需要。** MITM 证书在 Quantumult X App 内生成后保存在手机和描述文件里，远程配置更新不会动它。只有配置里内嵌了另一张证书（passphrase/p12 行）才会顶掉本地证书——本项目的构建流程已强制清洗任何证书数据（`patches.mitm`），配置永不携带证书。所以：证书只需在 App 内生成安装一次，之后日常自动更新无需任何操作。
+> 注意：不要使用他人分享的证书/描述文件（等同于把 HTTPS 私钥交给对方）。
 
 ### Q: 为什么导入后仍然能看到部分广告？
 A: 去广告规则无法保证覆盖所有 App 和版本。请先确认对应重写已启用；涉及 HTTPS 内容时，还要安装并信任 Quantumult X 的 MITM 证书。若设置无误，可能是 App 更新后接口发生变化，需要等待上游规则更新。
@@ -524,23 +553,23 @@ A: 默认是每天北京时间早上 6 点自动构建一次，保证你拿到�
 
 ### Q: 构建完了怎么在 Quantumult X 使用？
 A: 三份本地化配置任选可达的一条链路：
-- Raw：`https://raw.githubusercontent.com/你的用户名/qx-config-sync/main/MyQuantumultX_Local.conf`
-- 镜像：`https://testingcf.jsdelivr.net/gh/你的用户名/qx-config-sync@main/MyQuantumultX_Mirror.conf`
-- CF 反代：`https://你的Worker域名/https://raw.githubusercontent.com/你的用户名/qx-config-sync/main/MyQuantumultX_CF.conf`
+- Raw：`https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_Local.conf`
+- 镜像：`https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/MyQuantumultX_Mirror.conf`
+- CF 反代：`https://你的Worker域名/https://raw.githubusercontent.com/gclm/QuantumultX/main/MyQuantumultX_CF.conf`
 
 打开 Quantumult X → 配置 → 下载配置 → 填入链接 → 导入就可以用了。
 
 ### Q: 以前的旧版本配置（Surge/Clash、签到脚本等）去哪了？
 A: 旧的多端手工配置仓库（gclm/QuantumultX）已归档为 **v1.0 分支**（`https://github.com/gclm/QuantumultX/tree/v1.0`），不再维护。其中有价值的规则（AI 分流、Cursor/Trae、番茄小说去广告）已迁移进本仓库统一自动构建。
 
-### Q: 为什么配置好后 Telegram 收不到通知？
-A: 检查一下：
-1. Bot Token 和 Chat ID 是否正确
-2. 你需要先给你的 Bot 发一条消息，否则 Bot 没法主动给你发消息
-3. 检查 GitHub Secrets 名字是否正确，不能有空格
+### Q: 为什么配置好后收不到通知？
+A: 按通道检查：
+1. **飞书**（默认）：`FEISHU_WEBHOOK_URL` 是否正确；机器人安全设置若为「自定义关键词」，关键词需包含 `QX`（通知文案已内置）；若为「签名校验」，`FEISHU_SECRET` 必须填写
+2. **Telegram**：Bot Token 和 Chat ID 是否正确；需要先给你的 Bot 发一条消息
+3. 检查 `notify.provider` 配置与 GitHub Secrets 名字是否正确、不能有空格
 
 ### Q: 构建失败了怎么办？
-A: Telegram 会通知你构建失败，并且告诉你错误原因。你可以去 GitHub → Actions → 最新一次运行那里看完整日志。大部分情况是：
+A: 通知（飞书/Telegram）会推送构建失败消息和错误原因。你可以去 GitHub → Actions → 最新一次运行那里看完整日志。大部分情况是：
 1. 你的 `config.yaml` 格式错了（YAML 对缩进要求严格，仔细检查）
 2. 某个远程链接下载失败（一般重试一次就好，或者换个链接）
 
@@ -548,8 +577,12 @@ A: Telegram 会通知你构建失败，并且告诉你错误原因。你可以�
 
 ## 📊 当前版本更新日志
 
+*   ✅ **仓库迁移**：项目迁移至 `gclm/QuantumultX`，原多端手工配置归档为 v1.0 分支；qx-config-sync（suversal）仓库不再使用
+*   ✅ **飞书通知（默认）**：新增飞书群机器人 Webhook 推送，支持加签；`notify.provider` 可切换 feishu / telegram / both，凭证缺失自动降级
+*   ✅ **自有底包**：ddgksf2013 V269 固化为 `profiles/base.conf`，清理原作者水印/更新日志/专属分流/免费订阅/空壳规则，恢复 `udp_whitelist` 生效
+*   ✅ **MITM 证书保护**：构建强制清洗任何 `passphrase`/`p12` 行，配置永不携带证书；App 内一次生成，日常更新无需重新安装
 *   ✅ **三通道分发**：每次构建产出 Raw / jsDelivr 镜像 / Cloudflare Workers 反代三份配置，自动探活并随日报推送
-*   ✅ **底包快照保护**：上游底包失效自动回退仓库快照，快照也失效则拒绝提交，杜绝空配置覆盖线上
+*   ✅ **底包快照保护**：url 模式下上游底包失效自动回退仓库快照，快照也失效则拒绝提交，杜绝空配置覆盖线上
 *   ✅ **下载重试与镜像切换**：远程规则自动重试，raw 源失败自动切换 jsDelivr 源
 *   ✅ **内容校验**：拒绝空文件和 HTML 错误页写入规则快照
 *   ✅ **提交前 lint**：策略组/分流/重写数量阈值校验，残缺配置无法进入仓库
@@ -581,10 +614,7 @@ A: Telegram 会通知你构建失败，并且告诉你错误原因。你可以�
  
  ## Contact
 
-如果你在使用过程中遇到问题，欢迎联系我：
-
-- Telegram: [@suversal](https://t.me/suversal)
-- Email: `contact@suversal.com`
+如果你在使用过程中遇到问题，欢迎提 [Issue](https://github.com/gclm/QuantumultX/issues)。
 
 ---
 

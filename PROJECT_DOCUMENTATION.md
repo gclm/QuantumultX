@@ -1,6 +1,6 @@
 # QX-Config-Sync 项目文档
 
-> QuantumultX 配置自动构建与同步工具 V6.0
+> QuantumultX 配置自动构建与同步工具 V6.1
 
 ---
 
@@ -34,17 +34,20 @@ QX-Config-Sync 是一个用于自动构建 QuantumultX 配置文件的开源工�
 - **三通道分发**：Raw / jsDelivr 镜像 / Cloudflare Workers 反代三份配置同时产出并探活
 - **底包快照保护**：上游失效回退快照，快照失效拒绝提交，杜绝空配置覆盖线上
 - **质量校验**：下载内容校验（拒空文件/HTML 错误页）+ 提交前 lint
+- **通知可切换**：飞书群机器人（默认，支持加签）/ Telegram / 双通道，凭证缺失自动降级
+- **自有底包**：ddgksf2013 V269 固化为 `profiles/base.conf`，清理专属信息，无第三方站点单点依赖
 
 ---
 
 ## 项目结构
 
 ```
-qx-config-sync/
+QuantumultX/
 ├── .github/
 │   └── workflows/
 │       └── build.yml           # GitHub Actions 自动构建配置
 ├── profiles/
+│   ├── base.conf              # 自有底包（ddgksf2013 V269 固化 + 专属信息清理）
 │   └── config.yaml             # 主配置文件
 ├── rules/                      # 规则目录
 │   ├── my_custom.list          # 自定义分流规则（个人规则/番茄小说去广告）
@@ -55,14 +58,14 @@ qx-config-sync/
 │   └── rewrite_remote/         # [生成] 本地化后的远程重写规则
 ├── src/
 │   ├── main.py                 # 主入口文件
-│   └── qx_core.py              # 核心配置管理类
+│   ├── qx_core.py              # 核心配置管理类
+│   └── notify.py               # 通知模块（飞书/Telegram，provider 可切换）
 ├── requirements.txt            # Python 依赖
 ├── .gitignore                  # Git 忽略规则
 ├── MyQuantumultX.conf          # [生成] 原始远程链接配置（调试参考）
 ├── MyQuantumultX_Local.conf    # [生成] Raw 通道配置（主通道）
 ├── MyQuantumultX_Mirror.conf   # [生成] jsDelivr 镜像通道配置
-├── MyQuantumultX_CF.conf       # [生成] Cloudflare Workers 反代通道配置
-└── Origin_Quantumultx.conf     # [维护] 底包快照（上游失效时自动回退）
+└── MyQuantumultX_CF.conf       # [生成] Cloudflare Workers 反代通道配置
 ```
 
 ---
@@ -247,7 +250,7 @@ general:
 
 ```yaml
 dns:
-  - "server=/suversal.com/192.168.1.1"
+  - "server=/example.com/192.168.1.1"
 ```
 
 #### 5. 策略组映射 (Policy Map)
@@ -424,7 +427,7 @@ manager.add_list_item("filter_local", "ip6-cidr,::/0,direct", position="start")
 1. 拉取最新代码
 2. 设置 Python 3.12 环境（带并发保护，防止构建重叠提交）
 3. 安装项目依赖
-4. 运行构建脚本：下载底包（失败回退仓库快照）→ 清洗注入 → lint 校验 → 快照远程规则 → 生成四份配置 → 刷新底包快照 → 三通道探活
+4. 运行构建脚本：加载底包（本地 `profiles/base.conf`，url 模式带快照回退）→ 清洗注入 → lint 校验 → 快照远程规则 → 生成四份配置 → 三通道探活 → 推送通知（飞书/Telegram）
 5. 构建成功提交产物；构建失败以非零码退出，不提交，线上配置不受影响
 
 #### 配置文件位置
@@ -435,14 +438,30 @@ manager.add_list_item("filter_local", "ip6-cidr,::/0,direct", position="start")
 
 ## V6 可靠性设计
 
-### 底包快照保护（防止空配置覆盖线上）
+### 底包加载（本地优先）
 
 ```
-下载底包（重试 2 次）
-  ├─ 成功 → 使用最新底包，构建完成后刷新 Origin_Quantumultx.conf 快照
-  └─ 失败 → 回退仓库快照 Origin_Quantumultx.conf（Telegram 日报标注）
-              └─ 快照也不存在 → 抛异常 exit 1，workflow 不提交 + TG 告警
+config.yaml base:
+  file（默认）→ 直接加载 profiles/base.conf（自有底包，随仓库版本管理，无外部依赖）
+  url（可选） → 下载底包（重试 2 次）
+                 ├─ 成功 → 使用最新底包，构建完成后刷新 Origin_Quantumultx.conf 快照
+                 └─ 失败 → 回退仓库快照 Origin_Quantumultx.conf（通知日报标注）
+                             └─ 快照也不存在 → 抛异常 exit 1，workflow 不提交 + 告警
 ```
+
+`profiles/base.conf` 来源：ddgksf2013 小白配置 2.0（V269）固化。固化时的清理项：原作者水印与全部更新日志注释、tag 中的 `@ddgksf2013` 后缀、其个人域名的代理分流行、免费公共订阅行、两条空壳规则（GoogleVoice 42B / StreamingSE 295B）；唯一功能改动为恢复 `udp_whitelist=1-442, 444-65535`。`patches.mitm`（keywords: passphrase/p12）保证任何底包中的证书数据都会被清洗，配置永不携带 MITM 证书。
+
+### 构建通知
+
+统一走 `src/notify.py`，`config.yaml notify.provider`（或 env `NOTIFY_PROVIDER`）切换：
+
+| provider | 通道 | 凭证 |
+|----------|------|------|
+| feishu（默认） | 飞书群自定义机器人 Webhook，text 消息（HTML 报告自动转纯文本），支持加签 | `FEISHU_WEBHOOK_URL` / `FEISHU_SECRET`（可选） |
+| telegram | Bot API，HTML 消息 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` |
+| both | 双通道同发 | 两套凭证 |
+
+所选通道凭证缺失或发送失败时自动降级另一通道并记录日志。
 
 ### 远程规则下载
 
@@ -463,7 +482,7 @@ manager.add_list_item("filter_local", "ip6-cidr,::/0,direct", position="start")
 | Mirror | `URL_MIRROR_PREFIX`，默认 `https://testingcf.jsdelivr.net/gh/{repo}@main/rules` | `MyQuantumultX_Mirror.conf` |
 | CF | `URL_CF_PREFIX`，默认 `https://proxy.991201.xyz/https://raw.githubusercontent.com/{repo}/main/rules` | `MyQuantumultX_CF.conf` |
 
-构建末尾对三条链路各探测一次（带一次重试），结果随 Telegram 日报推送。探活验证的是服务存活，不等价于国内可达性。
+构建末尾对三条链路各探测一次（带一次重试），结果随通知日报推送。探活验证的是服务存活，不等价于国内可达性。
 
 ### 输出 lint
 

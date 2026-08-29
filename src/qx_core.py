@@ -42,6 +42,13 @@ class QXConfigManager:
         self._reset_sections()
         self._parse(content)
 
+    def load_from_file(self, path):
+        """从本地文件加载配置（自有底包 profiles/base.conf）"""
+        logger.info(f"📄 [Base] 从本地文件加载配置: {path}")
+        with open(path, 'r', encoding='utf-8') as f:
+            self.load_from_text(f.read())
+        return True
+
     def load_from_url(self, url):
         start_time = time.time()
         logger.info(f"📥 [Base] 开始下载底包: {url}")

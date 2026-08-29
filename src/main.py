@@ -18,8 +18,9 @@ if current_dir not in sys.path:
 
 try:
     from qx_core import QXConfigManager, logger
+    from notify import notify
 except ImportError as e:
-    print(f"❌ 严重错误: 无法导入 qx_core.py。请检查该文件是否在 {current_dir} 目录下。")
+    print(f"❌ 严重错误: 无法导入 src 下的模块（qx_core.py / notify.py）。请检查文件是否完整。")
     print(f"详细错误: {e}")
     sys.exit(1)
 
@@ -38,7 +39,7 @@ BASE_SNAPSHOT_FILE = os.path.join(BASE_DIR, "Origin_Quantumultx.conf")
 # Local  : GitHub Raw（主通道）
 # Mirror : jsDelivr CDN（注意 gh 源是 @分支 路径格式，单文件上限 20MB）
 # CF     : Cloudflare Workers 反代（拼接式：https://worker域名/完整原始URL）
-DEFAULT_REPO = os.environ.get("GITHUB_REPOSITORY", "suversal/qx-config-sync")
+DEFAULT_REPO = os.environ.get("GITHUB_REPOSITORY", "gclm/QuantumultX")
 
 
 def build_channels():
@@ -65,12 +66,9 @@ def build_channels():
 
 
 # ==========================================
-# 📱 Telegram 通知配置 (可选)
+# 🔔 通知配置见 src/notify.py（凭证走环境变量/GitHub Secrets）
+# provider 切换：env NOTIFY_PROVIDER > config.yaml notify.provider > 默认 feishu
 # ==========================================
-# 优先从环境变量读取，读取不到则使用这里的值
-TELEGRAM_BOT_TOKEN = "xxx"
-TELEGRAM_CHAT_ID = "xxx"
-
 # KV 类型的节点 (覆盖式)
 KV_SECTIONS = {"general", "mitm", "http_backend"}
 
@@ -347,30 +345,6 @@ def probe_channels(channels):
 # ==========================================
 # 通知
 # ==========================================
-def send_telegram_message(bot_token, chat_id, message):
-    """发送 Telegram 消息通知"""
-    if not bot_token or not chat_id or bot_token == "xxx":
-        logger.debug("⚠️ 未配置 Telegram，跳过通知")
-        return False
-
-    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-    data = {
-        "chat_id": chat_id,
-        "text": message,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": True
-    }
-
-    try:
-        response = requests.post(url, data=data, timeout=10)
-        response.raise_for_status()
-        logger.info("📤 [Telegram] 通知发送成功")
-        return True
-    except Exception as e:
-        logger.error(f"❌ [Telegram] 通知发送失败: {e}")
-        return False
-
-
 def check_file_changed(file_path):
     """检查文件是否与之前版本有变化"""
     if not os.path.exists(file_path):
@@ -454,8 +428,9 @@ def main():
     logger.info("🚀 === QX Builder V6 Started ===")
     check_environment()
 
-    bot_token = os.environ.get('TELEGRAM_BOT_TOKEN', TELEGRAM_BOT_TOKEN)
-    chat_id = os.environ.get('TELEGRAM_CHAT_ID', TELEGRAM_CHAT_ID)
+    # 通知通道：env NOTIFY_PROVIDER > config.yaml notify.provider > 默认 feishu
+    env_provider = os.environ.get('NOTIFY_PROVIDER', '')
+    notify_provider = env_provider or "feishu"
     stats = {"channels": {}, "base_source": "unknown", "failed_files": []}
 
     try:
@@ -466,13 +441,31 @@ def main():
         with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
 
+        # provider 以 config.yaml 为准（env 优先级更高，已在上方取默认前读取）
+        if env_provider:
+            notify_provider = env_provider
+        else:
+            notify_provider = (config or {}).get('notify', {}).get('provider', "feishu")
+
         manager = QXConfigManager()
 
-        # 1. 下载底包（失败自动回退仓库快照；两者皆失败则中止构建）
+        # 1. 加载底包（本地文件优先；url 模式带快照回退）
         fresh_content = None
-        if config and 'base' in config:
-            stats["base_source"], fresh_content = load_base_with_fallback(manager, config['base']['url'])
-            logger.info(f"📦 [Base] 底包来源: {stats['base_source']}")
+        if config and isinstance(config.get('base'), dict):
+            base_cfg = config['base']
+            if base_cfg.get('file'):
+                # 本地底包：随仓库版本管理，无外部依赖
+                base_path = base_cfg['file']
+                if not os.path.isabs(base_path):
+                    base_path = os.path.join(BASE_DIR, base_path)
+                if not os.path.exists(base_path):
+                    raise FileNotFoundError(f"本地底包不存在: {base_path}")
+                manager.load_from_file(base_path)
+                stats["base_source"] = "local"
+                logger.info(f"📦 [Base] 底包来源: local ({base_cfg['file']})")
+            elif base_cfg.get('url'):
+                stats["base_source"], fresh_content = load_base_with_fallback(manager, base_cfg['url'])
+                logger.info(f"📦 [Base] 底包来源: {stats['base_source']}")
 
         # 2. 全局清洗 (Patches)
         if config and 'patches' in config:
@@ -611,36 +604,34 @@ def main():
 
         logger.info("✨ === Build Complete ===")
 
-        # Telegram 通知 - 构建成功
-        if bot_token and chat_id:
-            stats["rules_added"] = manager.stats["rules_added"]
-            message = build_notification_message(True, stats, changed_files)
-            send_telegram_message(bot_token, chat_id, message)
+        # 通知 - 构建成功
+        stats["rules_added"] = manager.stats["rules_added"]
+        message = build_notification_message(True, stats, changed_files)
+        notify(message, notify_provider)
 
         sys.exit(0)
 
     except Exception as e:
-        # 构建失败，发送 Telegram 通知（workflow 因非零退出码不会提交，线上配置不受影响）
+        # 构建失败，发送通知（workflow 因非零退出码不会提交，线上配置不受影响）
         logger.error(f"❌ 构建失败: {e}")
-        if bot_token and chat_id:
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            github_repo = os.environ.get('GITHUB_REPOSITORY', '')
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        github_repo = os.environ.get('GITHUB_REPOSITORY', '')
 
-            message = (
-                f"❌ <b>Quantumult X 配置构建失败</b>\n\n"
-                f"⏰ <b>失败时间:</b> {now}\n"
-            )
-            if github_repo:
-                repo_url = f"https://github.com/{github_repo}"
-                message += f"📦 <b>仓库:</b> <a href=\"{repo_url}\">{github_repo}</a>\n"
+        message = (
+            f"❌ <b>Quantumult X 配置构建失败</b>\n\n"
+            f"⏰ <b>失败时间:</b> {now}\n"
+        )
+        if github_repo:
+            repo_url = f"https://github.com/{github_repo}"
+            message += f"📦 <b>仓库:</b> <a href=\"{repo_url}\">{github_repo}</a>\n"
 
-            message += (
-                f"\n⚠️ <b>错误信息:</b>\n"
-                f"<code>{str(e)}</code>\n\n"
-                f"请前往 GitHub Action 查看完整日志\n\n"
-                f"#QXConfig #BuildFailed"
-            )
-            send_telegram_message(bot_token, chat_id, message)
+        message += (
+            f"\n⚠️ <b>错误信息:</b>\n"
+            f"<code>{str(e)}</code>\n\n"
+            f"请前往 GitHub Action 查看完整日志\n\n"
+            f"#QXConfig #BuildFailed"
+        )
+        notify(message, notify_provider)
 
         sys.exit(1)
 

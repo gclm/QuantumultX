@@ -48,6 +48,10 @@ jobs:
           URL_RAW_PREFIX: ${{ secrets.URL_RAW_PREFIX }}
           URL_MIRROR_PREFIX: ${{ secrets.URL_MIRROR_PREFIX }}
           URL_CF_PREFIX: ${{ secrets.URL_CF_PREFIX }}
+          # 通知通道：飞书（默认）/ Telegram，见 config.yaml notify.provider
+          NOTIFY_PROVIDER: ${{ secrets.NOTIFY_PROVIDER }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
@@ -56,8 +60,8 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "QX Builder"
-          # 添加生成的配置（原链版 + 三条分发通道）和底包快照
-          git add MyQuantumultX.conf MyQuantumultX_Local.conf MyQuantumultX_Mirror.conf MyQuantumultX_CF.conf Origin_Quantumultx.conf
+          # 添加生成的配置（原链版 + 三条分发通道）；底包为本地 profiles/base.conf，无需提交快照
+          git add MyQuantumultX.conf MyQuantumultX_Local.conf MyQuantumultX_Mirror.conf MyQuantumultX_CF.conf
           git add rules/filter_remote/ rules/rewrite_remote/
           # 如果文件有变化则提交，没变化则跳过 (防止报错)
           git diff-index --quiet HEAD || git commit -m "Auto-build config $(date +'%Y-%m-%d')"
