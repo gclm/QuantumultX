@@ -2,26 +2,26 @@
 # Surge DOMAIN-SUFFIX 语法已转换为 QX host-suffix 语法
 
 # > Cursor
-host-suffix, cursor.com, 美国节点
-host-suffix, cursor.sh, 美国节点
-host-suffix, cursor-cdn.com, 美国节点
-host-suffix, cursorapi.com, 美国节点
+host-suffix, cursor.com, AI服务
+host-suffix, cursor.sh, AI服务
+host-suffix, cursor-cdn.com, AI服务
+host-suffix, cursorapi.com, AI服务
 
 # > ElevenLabs
-host-suffix, elevenlabs.io, 美国节点
+host-suffix, elevenlabs.io, AI服务
 
 # > WorkOS (Cursor 账号体系)
-host-suffix, workos.com, 美国节点
+host-suffix, workos.com, AI服务
 
 # > Trae
-host-suffix, trae.ai, 美国节点
-host-suffix, trae.com.cn, 美国节点
-host-suffix, byteoversea.com, 美国节点
-host-suffix, trae-api-sg.mchost.guru, 美国节点
-host-suffix, lf3-static.bytednsdoc.com, 美国节点
-host-suffix, bytegate-sg.byteintlapi.com, 美国节点
-host-suffix, abtestvm-sg.bytedance.com, 美国节点
-host-suffix, tron-sg.bytelemon.com, 美国节点
-host-suffix, sf16-short-sg.bytedapm.com, 美国节点
-host-suffix, tron.jiyunhudong.com, 美国节点
-host-suffix, starling.zijieapi.com, 美国节点
+host-suffix, trae.ai, AI服务
+host-suffix, trae.com.cn, AI服务
+host-suffix, byteoversea.com, AI服务
+host-suffix, trae-api-sg.mchost.guru, AI服务
+host-suffix, lf3-static.bytednsdoc.com, AI服务
+host-suffix, bytegate-sg.byteintlapi.com, AI服务
+host-suffix, abtestvm-sg.bytedance.com, AI服务
+host-suffix, tron-sg.bytelemon.com, AI服务
+host-suffix, sf16-short-sg.bytedapm.com, AI服务
+host-suffix, tron.jiyunhudong.com, AI服务
+host-suffix, starling.zijieapi.com, AI服务

@@ -4,14 +4,14 @@
 
 本仓库是我自用的 **Quantumult X 去广告配置（插件集合）**，用于减少 App 开屏、信息流、网页和视频场景中的常见广告。GitHub Actions 每日自动构建：合并自有底包与个人增量配置、把上游规则快照进仓库，保证配置持续更新、稳定可用。
 
-[立即使用本地化配置](https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf) · [镜像加速版](https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/QuantumultX_Mirror.conf) · [查看自动构建状态](https://github.com/gclm/QuantumultX/actions)
+[立即使用主配置](https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX.conf) · [备用通道（CF 反代）](https://proxy.991201.xyz/https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_CF.conf) · [查看自动构建状态](https://github.com/gclm/QuantumultX/actions)
 
 ---
 
 ## 🛡️ 它能做什么
 
 - **一键启用常用去广告规则**：集中管理 App、网页、视频等场景的分流与重写规则。
-- **覆盖常见应用场景**：项目当前整合了微博、知乎、小红书、哔哩哔哩、高德地图、网易、百度网盘、YouTube、Spotify 等相关规则。
+- **覆盖常见应用场景**：项目当前整合了微博、知乎、小红书、哔哩哔哩、高德地图、网易、百度网盘、番茄小说、百度系 App、QQ音乐、YouTube、Spotify 等相关规则。
 - **每天自动更新**：默认每天北京时间 06:00 自动构建，同步上游规则并重新生成配置，无需手动追更。
 - **把远程规则保存到自己的仓库**：降低上游链接失效、限速或变更带来的影响。
 - **不包含任何私人信息**：无机场订阅、无证书数据，所有配置和规则公开可审查。
@@ -24,18 +24,17 @@
 ## 🚀 导入使用
 
 1. 先备份你当前的 Quantumult X 配置。
-2. 复制下面的配置地址（三个地址内容完全相同，只是分发链路不同，按网络可达性任选其一）：
+2. 复制下面的配置地址（两个地址内容完全相同，只是分发链路不同，按网络可达性任选其一）：
 
    | 通道 | 配置地址 | 适用场景 |
    |---|---|---|
-   | **Raw（主通道）** | `https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf` | 默认首选 |
-   | **Mirror（CDN 镜像）** | `https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/QuantumultX_Mirror.conf` | Raw 直连不稳时 |
-   | **CF（自建反代）** | `https://proxy.991201.xyz/https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_CF.conf` | 以上均不稳时 |
+   | **Raw（主通道）** | `https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX.conf` | 默认首选 |
+   | **CF（自建反代）** | `https://proxy.991201.xyz/https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_CF.conf` | Raw 直连不稳时 |
 
 3. 在 Quantumult X 中打开配置文件管理，选择“下载配置”，粘贴地址并导入。
 4. 如需使用 HTTPS 重写规则，请按下一节「配置 Quantumult X」生成、安装并信任 MITM 证书。
 
-`QuantumultX_Local.conf` 会优先引用本仓库保存的规则文件，适合日常使用。导入完整配置可能替换你现有的策略与分流，因此第一步请务必备份。
+`QuantumultX.conf` 会优先引用本仓库保存的规则文件，适合日常使用。导入完整配置可能替换你现有的策略与分流，因此第一步请务必备份。
 
 > **节点订阅不随配置分发**：本配置不包含任何机场订阅链接（策略组通过 `server-tag-regex` 正则自动分组，兼容任意机场）。请在 Quantumult X 的「订阅」区自行添加并维护你的节点订阅。
 
@@ -61,10 +60,10 @@
 建议先尝试“下载配置”，使用本项目的本地化配置地址：
 
 ```text
-https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf
+https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX.conf
 ```
 
-如果当前网络无法访问 GitHub Raw，可以先在电脑或浏览器中下载 `QuantumultX_Local.conf`，发送到 iPhone 后再选择“导入配置”。
+如果当前网络无法访问 GitHub Raw，可以先在电脑或浏览器中下载 `QuantumultX.conf`，发送到 iPhone 后再选择“导入配置”；或改用上方 CF 备用通道地址。
 
 > 导入完整配置可能替换现有的策略组、分流和重写设置，请先备份当前配置。
 
@@ -138,7 +137,7 @@ https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf
 ### 📩 构建通知（飞书 / Telegram）
 
 - 默认通过**飞书群机器人 Webhook** 推送，也支持 Telegram，或双通道同时发送（`notify.provider` 切换）。
-- **构建成功**：显示本次下载了多少规则、哪些文件发生变化、三条链路探活结果。
+- **构建成功**：显示本次下载了多少规则、哪些文件发生变化、两条链路探活结果。
 - **构建失败**：直接推送错误信息，不必先去 GitHub Actions 中翻找日志。
 - 配置有变化时会提醒，无变化时也会报告当前状态。
 - 所选通道凭证缺失或发送失败时，自动降级到另一通道并记录日志。
@@ -152,11 +151,12 @@ https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf
 - 下载失败时优先**继续使用仓库中的旧快照**（链接不变），仅在无任何快照时才回退原链。
 - 支持 `localize_skip` 豁免名单：有 Cloudflare 防火墙、禁止服务器端抓取的源（如 kelee.one）保持原链，不计入失败。
 
-### 🕸️ 三通道分发
+### 🌏 双通道分发
 
-- 每次构建同时产出三份链接不同、内容相同的配置：**Raw 版 / jsDelivr 镜像版 / Cloudflare Workers 反代版**。
-- 构建时自动对三条链路探活，结果随通知日报推送，哪条链路失效一目了然。
+- 每次构建同时产出两份链接不同、内容相同的配置：**Raw 主配置（QuantumultX.conf）/ Cloudflare Workers 反代版（QuantumultX_CF.conf）**。
+- 构建时自动对两条链路探活，结果随通知推送，哪条链路失效一目了然。
 - 某条链路不可达时，在 Quantumult X 中换导入另一份配置即可，无需任何手工修改。
+- jsDelivr 不作为分发通道（CDN 缓存会滞后每日规则更新），仅在构建时作为下载上游规则的镜像回源。
 
 ### 🧱 自有底包
 
@@ -202,7 +202,7 @@ https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf
 - **内容校验**：空文件、HTML 错误页会被识别并拒绝写入快照，防止坏内容覆盖好规则。
 - **下载间隔保护**：每次下载后等待 1 秒，降低请求过于频繁而被上游限制的概率。
 - **单项失败兼容**：某个远程文件下载失败时保留可用链接并继续构建，不让单个上游故障拖垮整份配置。
-- **多配置输出**：同时生成保留原始链接的 `QuantumultX.conf`（调试参考）和三条分发通道的本地化配置。
+- **双配置输出**：同时生成 Raw 主配置 `QuantumultX.conf` 和 CF 反代备用 `QuantumultX_CF.conf`，内容相同、仅链接前缀不同。
 
 ---
 
@@ -217,7 +217,7 @@ QuantumultX/
 │   └── config.yaml           # 👈 你的核心配置文件（改这里！）
 ├── images/                   # README 使用的 Quantumult X 操作截图
 ├── rules/                     # 存放本地化后的规则文件
-│   ├── custom.list        # 自定义分流（个人规则/番茄小说去广告等）
+│   ├── custom.list        # 自定义分流（苹果增强/网易云等个人规则）
 │   ├── dev.list           # 开发者工具分流（Cursor/Trae 等）
 │   ├── filter_remote/        # 本地化后的远程分流规则
 │   └── rewrite_remote/       # 本地化后的远程重写规则
@@ -225,10 +225,8 @@ QuantumultX/
 │   ├── main.py               # 主程序入口
 │   ├── qx_core.py            # 核心处理逻辑
 │   └── notify.py             # 通知模块（飞书/Telegram）
-├── QuantumultX.conf        # [生成] 原始远程链接配置（调试参考）
-├── QuantumultX_Local.conf  # [生成] Raw 通道配置（推荐使用）
-├── QuantumultX_Mirror.conf # [生成] jsDelivr 镜像通道配置
-├── QuantumultX_CF.conf     # [生成] Cloudflare Workers 反代通道配置
+├── QuantumultX.conf        # [生成] 主配置（Raw 通道，推荐使用）
+├── QuantumultX_CF.conf     # [生成] 备用通道配置（Cloudflare Workers 反代）
 └── README.md
 ```
 
@@ -253,16 +251,14 @@ python src/main.py
 ```
 
 ### 3. 获取结果
-生成了**四份配置文件**，都可以直接导入 Quantumult X 使用：
+生成了**两份配置文件**，都可以直接导入 Quantumult X 使用：
 
 | 配置文件 | 分发链路 | 说明 |
 |---------|---------|------|
-| `QuantumultX.conf` | 上游原始链接 | 只合并不本地化，用于调试比对 |
-| `QuantumultX_Local.conf` | GitHub Raw | **主通道**，规则快照全部在本仓库 |
-| `QuantumultX_Mirror.conf` | jsDelivr CDN | 镜像通道，Raw 直连不稳时使用 |
-| `QuantumultX_CF.conf` | Cloudflare Workers | 自建反代通道，前两者失效时使用 |
+| `QuantumultX.conf` | GitHub Raw | **主通道**，规则快照全部在本仓库 |
+| `QuantumultX_CF.conf` | Cloudflare Workers | 备用通道，Raw 直连不稳时使用 |
 
-> 💡 三份本地化配置内容完全相同，仅链接前缀不同。哪个链路在你的网络环境下可达就用哪个；Telegram 日报会推送每条链路的探活结果。
+> 💡 两份配置内容完全相同，仅规则链接前缀不同。哪个链路在你的网络环境下可达就用哪个；构建通知会推送每条链路的探活结果。jsDelivr 不再作为分发通道（CDN 缓存会滞后每日规则更新），仅在构建时作为下载上游规则的镜像回源。
 
 ---
 
@@ -364,6 +360,8 @@ policy:
 - `server-tag-regex=正则表达式`：自动从你的订阅里匹配符合规则的节点
 - `check-interval=900`：测速间隔，单位是秒（900秒 = 15分钟）
 - `img-url=`：策略组图标链接
+
+**服务组结构（重要）**：配置在地区组之上定义了一层服务组——`AI服务`、`苹果代理`、`TikTok`、`交易所`，成员是「多个地区组 + 手动选择 + proxy」。业务分流规则一律挂到服务组而不是直接挂地区组：服务组永远有可选候选，你的机场订阅里缺任何一个地区的节点（比如没有美区），对应服务照常可用，手动换个候选即可。地区组（香港节点、美国节点等）只作为服务组的候选存在。
 
 ---
 
@@ -493,12 +491,11 @@ mitm:
 ### Q: 这个项目提供代理节点吗？
 A: 不提供。它提供的是 Quantumult X 去广告配置、规则和自动更新工具。需要代理分流时，请使用自己的合法节点订阅（推荐在 App 的「订阅」区自行添加，不要写进配置文件），并注意保护订阅地址中的 Token。
 
-### Q: 三份本地化配置（Local/Mirror/CF）该导入哪个？
+### Q: 两份配置（Raw/CF）该导入哪个？
 A: 内容完全相同，任选可达的即可：
-- 默认用 **Local**（GitHub Raw）；
-- Raw 打不开就换 **Mirror**（jsDelivr 镜像）；
-- 都不稳就用 **CF**（Cloudflare Workers 反代）。
-每次构建后的通知日报会附上三条链路的探活结果。已在 QX 中使用旧链接的，换导入新链接后记得删除旧的远程配置引用。
+- 默认用 **Raw**（GitHub Raw 主配置 `QuantumultX.conf`）；
+- Raw 打不开就换 **CF**（Cloudflare Workers 反代 `QuantumultX_CF.conf`）。
+每次构建后的通知会附上两条链路的探活结果。已在 QX 中使用旧链接（Local/Mirror）的，换导入新链接后记得删除旧的远程配置引用。
 
 ### Q: 每次更新配置都需要重新生成 MITM 证书吗？
 A: **不需要。** MITM 证书在 Quantumult X App 内生成后保存在手机和描述文件里，远程配置更新不会动它。只有配置里内嵌了另一张证书（passphrase/p12 行）才会顶掉本地证书——本项目的构建流程已强制清洗任何证书数据（`patches.mitm`），配置永不携带证书。所以：证书只需在 App 内生成安装一次，之后日常自动更新无需任何操作。
@@ -514,9 +511,8 @@ A: 很多去广告规则会持续更新，但原链接有时会限速、变更�
 A: 默认是每天北京时间早上 6 点自动构建一次，保证你拿到最新规则。你也可以随时手动构建。
 
 ### Q: 构建完了怎么在 Quantumult X 使用？
-A: 三份本地化配置任选可达的一条链路：
-- Raw：`https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_Local.conf`
-- 镜像：`https://testingcf.jsdelivr.net/gh/gclm/QuantumultX@main/QuantumultX_Mirror.conf`
+A: 两份配置任选可达的一条链路：
+- Raw：`https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX.conf`
 - CF 反代：`https://你的Worker域名/https://raw.githubusercontent.com/gclm/QuantumultX/main/QuantumultX_CF.conf`
 
 打开 Quantumult X → 配置 → 下载配置 → 填入链接 → 导入就可以用了。
@@ -543,13 +539,14 @@ A: 通知（飞书/Telegram）会推送构建失败消息和错误原因。你�
 *   ✅ **飞书通知（默认）**：新增飞书群机器人 Webhook 推送，支持加签；`notify.provider` 可切换 feishu / telegram / both，凭证缺失自动降级
 *   ✅ **自有底包**：ddgksf2013 V269 固化为 `profiles/base.conf`，清理原作者水印/更新日志/专属分流/免费订阅/空壳规则，恢复 `udp_whitelist` 生效
 *   ✅ **MITM 证书保护**：构建强制清洗任何 `passphrase`/`p12` 行，配置永不携带证书；App 内一次生成，日常更新无需重新安装
-*   ✅ **三通道分发**：每次构建产出 Raw / jsDelivr 镜像 / Cloudflare Workers 反代三份配置，自动探活并随日报推送
+*   ✅ **双通道分发**：每次构建产出 Raw 主配置 / Cloudflare Workers 反代两份配置，自动探活并随通知推送（jsDelivr 镜像通道已移除，避免 CDN 缓存滞后规则更新）
 *   ✅ **底包快照保护**：url 模式下上游底包失效自动回退仓库快照，快照也失效则拒绝提交，杜绝空配置覆盖线上
 *   ✅ **下载重试与镜像切换**：远程规则自动重试，raw 源失败自动切换 jsDelivr 源
 *   ✅ **内容校验**：拒绝空文件和 HTML 错误页写入规则快照
 *   ✅ **提交前 lint**：策略组/分流/重写数量阈值校验，残缺配置无法进入仓库
 *   ✅ **本地化豁免名单**：`localize_skip` 支持 CF 防火墙源保持原链
-*   ✅ **规则整合**：迁入 AI 分流（OpenAI/Claude/Copilot）、Cursor/Trae、番茄小说去广告等自定义规则
+*   ✅ **规则整合**：迁入 AI 分流（OpenAI/Claude/Copilot）、Cursor/Trae 等自定义规则；引入 zqzess 番茄小说 / 百度系 / QQ音乐去广告片段，番茄广告拦截完全交由上游片段自动更新
+*   ✅ **服务组结构**：新增 `AI服务` / `苹果代理` / `TikTok` / `交易所` 服务组（多地区候选 + 手动选择/proxy 兜底），业务分流一律挂服务组、不再直接挂地区组——订阅里缺任一地区节点时策略组不会为空，服务照常可用
 *   ✅ **节点订阅治理**：订阅链接不进仓库，App 内自管；清洗底包自带免费订阅
 *   ✅ Telegram 通知增强：下载成功/旧快照/失败/豁免计数、异常文件清单、通道探活结果
 *   ✅ Workflow 现代化：actions v5、Python 3.12、并发保护

@@ -28,7 +28,6 @@ except ImportError as e:
 # 项目根目录 (src 的上一级)
 BASE_DIR = os.path.dirname(current_dir)
 CONFIG_PATH = os.path.join(BASE_DIR, "profiles", "config.yaml")
-OUTPUT_FILE = os.path.join(BASE_DIR, "QuantumultX.conf")
 RULES_DIR = os.path.join(BASE_DIR, "rules")
 # 底包快照：上游底包站点失效时回退，保证构建永不产出空配置覆盖线上
 BASE_SNAPSHOT_FILE = os.path.join(BASE_DIR, "Origin_Quantumultx.conf")
@@ -36,25 +35,21 @@ BASE_SNAPSHOT_FILE = os.path.join(BASE_DIR, "Origin_Quantumultx.conf")
 # ==========================================
 # 🌐 分发通道配置（前缀可被环境变量覆盖）
 # ==========================================
-# Local  : GitHub Raw（主通道）
-# Mirror : jsDelivr CDN（注意 gh 源是 @分支 路径格式，单文件上限 20MB）
-# CF     : Cloudflare Workers 反代（拼接式：https://worker域名/完整原始URL）
+# 只保留两份产物，避免多通道维护成本：
+# Raw : GitHub Raw 主配置（QuantumultX.conf，即仓库主文件，订阅首选）
+# CF  : Cloudflare Workers 反代备用（QuantumultX_CF.conf，实时回源无 CDN 缓存延迟）
+# jsDelivr 不再作为分发通道（缓存延迟会滞后每日规则更新），仅保留在
+# fetch_with_fallback 中作为构建期下载上游规则的镜像回源。
 DEFAULT_REPO = os.environ.get("GITHUB_REPOSITORY", "gclm/QuantumultX")
 
 
 def build_channels():
     return [
         {
-            "name": "Local",
-            "output": os.path.join(BASE_DIR, "QuantumultX_Local.conf"),
+            "name": "Raw",
+            "output": os.path.join(BASE_DIR, "QuantumultX.conf"),
             "prefix": os.environ.get("URL_RAW_PREFIX")
             or f"https://raw.githubusercontent.com/{DEFAULT_REPO}/main/rules",
-        },
-        {
-            "name": "Mirror",
-            "output": os.path.join(BASE_DIR, "QuantumultX_Mirror.conf"),
-            "prefix": os.environ.get("URL_MIRROR_PREFIX")
-            or f"https://testingcf.jsdelivr.net/gh/{DEFAULT_REPO}@main/rules",
         },
         {
             "name": "CF",
@@ -214,7 +209,7 @@ def localize_remote_rules(manager, skip_keywords=None):
     """下载远程规则快照到 rules/ 目录。
 
     不直接修改 manager 内的链接行，而是返回记录，
-    由各分发通道按自己的前缀重建链接，保证三份产物互不污染。
+    由各分发通道按自己的前缀重建链接，保证两份产物互不污染。
     记录 kind: localized(可用本地化链接) / keep(保留原始行)
     skip_keywords: URL 命中即保持原链（CF 防火墙源等无法服务器端抓取的场景），不计失败"""
     skip_keywords = skip_keywords or []
@@ -558,10 +553,9 @@ def main():
                 if url:
                     manager.add_remote_rule(url, item.get('tag', 'Remote'), policy_map.get(item.get('policy'), item.get('policy')))
 
-        # 6. 提交前 lint，通过后保存原链版（调试/参考用）
-        logger.info(f"💾 [Step] 生成原始配置文件 -> {os.path.basename(OUTPUT_FILE)}")
+        # 6. 提交前 lint（不落盘调试版；产物只保留 Raw 主配置 + CF 备用两份）
+        logger.info("🔍 [Step] 输出前质量校验")
         lint_output(manager)
-        manager.save(OUTPUT_FILE)
 
         # 7. 抓取远程规则快照到 rules/（不改动内存中的链接行）
         channels = build_channels()
@@ -593,7 +587,7 @@ def main():
         logger.info("🔍 [Check] 检查配置文件和规则是否有变化...")
         changed_files = []
         # 仅监测真实产物；url 模式的底包快照单独判断（不存在时跳过）
-        monitor_files = [OUTPUT_FILE] + [ch["output"] for ch in channels]
+        monitor_files = [ch["output"] for ch in channels]
         if fresh_content is not None:
             monitor_files.append(BASE_SNAPSHOT_FILE)
         for f in monitor_files:
