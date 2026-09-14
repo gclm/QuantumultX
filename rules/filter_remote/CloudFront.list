@@ -1,0 +1,4 @@
+# CloudFront 全球 CDN 收口：所有 *.cloudfront.net 统一走「全球加速」
+# 上游各规则集只收录了零星特定子域，未收录的子域会落到底部分流（国内直连不可靠）
+# 注意：本引用必须排在「广告终结者」之后，避免遮蔽其对 cloudfront 广告域的拦截
+DOMAIN-SUFFIX,cloudfront.net
