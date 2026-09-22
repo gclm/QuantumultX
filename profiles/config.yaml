@@ -37,10 +37,10 @@ patches:
       - "static"      # 删除名字里带 static的策略组
       - "url-latency-benchmark" # 移除策略
 
-  # 2. 排除不需要的 DNS
-  dns:
-    # 移除no-ipv6配置，开启ipv6
-    keywords: ["no-ipv6"]
+  # 2. 排除不需要的 DNS（2026-09-22 起不再移除 no-ipv6：本机无公网 IPv6 出口，
+  #    开 AAAA 解析会让有 v6 记录的微信域名直连 No route to host，见 git log）
+  # dns:
+  #   keywords: ["no-ipv6"]
 
   # 3. 排除不需要的本地分流 (慎用)
   filter_local:
@@ -72,6 +72,13 @@ general:
 
 # 1. 自定义 DNS
 dns:
+  # 本机无公网 IPv6 出口，禁用 AAAA 解析（否则微信 HTTPDNS 等有 v6 记录的域名直连失败）
+  - "no-ipv6"
+  # 微信/腾讯系域名指定 DNSPod 解析（就近调度，避免公众号图片 qpic/qlogo 解析异常）
+  - "server=/*.qq.com/119.29.29.29"
+  - "server=/*.wechat.com/119.29.29.29"
+  - "server=/*.qpic.cn/119.29.29.29"
+  - "server=/*.qlogo.cn/119.29.29.29"
   # 你的域名走内网DNS
   #- "server=/example.com/192.168.1.1"
 
