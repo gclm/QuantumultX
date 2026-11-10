@@ -172,14 +172,6 @@ filter_remote:
     tag: "QQ音乐净化"
 
 # ------------------------------------------------------------------------------
-# [豁免] 不参与本地化的远程源 (Localize Skip)
-# ------------------------------------------------------------------------------
-# URL 命中关键字的远程引用保持原链（客户端直接拉取），不计入下载失败统计。
-# 适用有 Cloudflare 防火墙、禁止服务器端抓取的源（如 kelee.one 会 403）
-localize_skip:
-  - "kelee.one"
-
-# ------------------------------------------------------------------------------
 # [修改] 重写 (Rewrite)
 # ------------------------------------------------------------------------------
 rewrite_local:
@@ -195,14 +187,11 @@ rewrite_remote:
   - "https://limbopro.com/Adblock4limbo.conf, tag=毒奶特供(去网页广告计划), enabled=true"
   - "https://raw.githubusercontent.com/Peng-YM/Sub-Store/master/config/QX.snippet, tag=Sub-store(高级订阅管理器), enabled=true"
   - "https://raw.githubusercontent.com/iab0x00/ProxyRules/main/Rewrite/PluginHub2QX.snippet, tag=Loon订阅转换, enabled=true"
-  - "https://kelee.one/Tool/Loon/Lpx/AppleWeatherEnhancer.lpx, tag=苹果天气增强, enabled=true, opt-parser=true"
-  - "https://kelee.one/Tool/Loon/Lpx/Tieba_remove_ads.lpx, tag=贴吧去广告, enabled=true, opt-parser=true"
-  - "https://kelee.one/Tool/Loon/Lpx/Cainiao_remove_ads.lpx, tag=菜鸟去广告, enabled=true, opt-parser=true"
-  - "https://kelee.one/Tool/Loon/Lpx/MojiWeather_remove_ads.lpx, tag=墨迹天气去广告, enabled=true, opt-parser=true"
-  - "https://kelee.one/Tool/Loon/Lpx/Weibo_remove_ads.lpx, tag=微博去广告, enabled=true, opt-parser=true"
-  # 微信开发者工具对微信域名做证书钉扎，MITM 解密 mp.weixin.qq.com 会致其登录
-  # 握手失败(errSSLPeerHandshakeFail -9806)卡「登录中」，故禁用该重写（2026-09-22）
-  - "https://kelee.one/Tool/Loon/Lpx/Weixin_Official_Accounts_remove_ads.lpx, tag=微信公众号去广告, enabled=false, opt-parser=true"
+  # kelee.one 全站启用 Cloudflare 人机验证（2026-10 起），QX 更新器拿到挑战页被判「内容无效」，已全部移除（原 6 条）
+  # 换源 ddgksf2013 的 QX 原生重写（构建时本地化为自托管 CF 前缀）；微博去广告由下方 WeiboAds.conf 覆盖
+  - "https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/MoJiWeatherAds.conf, tag=墨迹天气去广告, enabled=true"
+  - "https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/CainiaoAds.conf, tag=菜鸟去广告, enabled=true"
+  - "https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/TieBaAds.conf, tag=贴吧去广告, enabled=true"
   # zqzess 广告屏蔽重写（与同名分流片段配合使用；QX 原生格式无需 opt-parser）
   - "https://raw.githubusercontent.com/zqzess/rule_for_quantumultX/master/QuantumultX/rewrite/FanQieNovel.qxrewrite, tag=番茄小说净化, enabled=true"
   - "https://raw.githubusercontent.com/zqzess/rule_for_quantumultX/master/QuantumultX/rewrite/baiduAd.qxrewrite, tag=百度系净化, enabled=true"
