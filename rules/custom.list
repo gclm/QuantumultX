@@ -4,8 +4,14 @@ host-suffix,ddgksf2013.top,自动选择
 #CM
 host-suffix,cmliussss.com,自动选择
 
-#github
-host-keyword, github, 全球加速
+#github（与底包 [filter_remote] 的 GitHub.list 同挂软件开发组）
+host-keyword, github, 软件开发
+
+# 开发依赖源（blackmatrix7 无对应列表，本地补充）
+host-suffix, huggingface.co, 软件开发
+host-suffix, hf.co, 软件开发
+host-suffix, brew.sh, 软件开发
+host-suffix, ghcr.io, 软件开发
 
 # Apple Intelligence / Private Relay（国内直连不可用，走苹果代理服务组）
 host,apple-relay.apple.com,苹果代理
